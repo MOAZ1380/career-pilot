@@ -1,0 +1,253 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERNSHIP
+  FREELANCE
+}
+
+enum SkillLevel {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+  EXPERT
+}
+
+enum LanguageLevel {
+  BASIC
+  CONVERSATIONAL
+  PROFESSIONAL
+  NATIVE
+}
+
+enum ResumeTemplate {
+  MODERN
+  CLASSIC
+  MINIMAL
+}
+
+model User {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  email       String   @unique
+  password    String
+  isVerified  Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  profile     Profile?
+
+  @@index([email])
+}
+
+model Profile {
+  id            String @id @default(uuid())
+  firstName     String
+  lastName      String
+  headline      String?
+  bio           String?
+  image         String?
+  userId        String @unique
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  user          User @relation(fields:[userId], references:[id], onDelete: Cascade)
+  contactInfo   ContactInfo?
+  skills        Skill[]
+  experiences   Experience[]
+  projects      Project[]
+  educations    Education[]
+  certificates  Certificate[]
+  languages     Language[]
+  resumes       Resume[]
+
+  @@index([userId])
+}
+
+model ContactInfo {
+  id         String @id @default(uuid())
+  phone      String?
+  linkedIn   String?
+  github     String?
+  portfolio  String?
+  country    String?
+  city       String?
+  profileId  String @unique
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete: Cascade)
+}
+
+model Skill {
+  id String @id @default(uuid())
+  name String
+  level SkillLevel
+  yearsOfExperience Int
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  resumeSkills ResumeSkill[]
+
+  @@index([profileId])
+}
+
+model Experience {
+  id String @id @default(uuid())
+  company String
+  position String
+  employmentType EmploymentType
+  location String?
+  startDate DateTime
+  endDate DateTime?
+  currentlyWorking Boolean
+  description String[]
+  technologies String[]
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  resumeExperiences ResumeExperience[]
+  @@index([profileId])
+}
+
+model Project {
+  id String @id @default(uuid())
+  name String
+  description String
+  github String?
+  liveDemo String?
+  technologies String[]
+  startDate DateTime?
+  endDate DateTime?
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  resumeProjects ResumeProject[]
+  @@index([profileId])
+}
+
+model Education {
+  id String @id @default(uuid())
+  university String
+  degree String
+  field String
+  grade String?
+  startDate DateTime
+  endDate DateTime?
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  @@index([profileId])
+}
+
+model Certificate {
+  id String @id @default(uuid())
+  name String
+  issuer String
+  issueDate DateTime
+  expirationDate DateTime?
+  credentialId String?
+  credentialUrl String?
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  resumeCertificates ResumeCertificate[]
+  @@index([profileId])
+}
+
+model Language {
+  id String @id @default(uuid())
+  language String
+  level LanguageLevel
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  resumeLanguages ResumeLanguage[]
+  @@index([profileId])
+}
+
+model Resume {
+  id String @id @default(uuid())
+  title String
+  template ResumeTemplate
+  jobDescription String?
+  generatedSummary String?
+  profileId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  skills ResumeSkill[]
+  experiences ResumeExperience[]
+  projects ResumeProject[]
+  certificates ResumeCertificate[]
+  languages ResumeLanguage[]
+
+  @@index([profileId])
+}
+
+model ResumeSkill {
+  id String @id @default(uuid())
+  resumeId String
+  skillId String
+
+  resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
+  skill Skill @relation(fields:[skillId], references:[id], onDelete:Cascade)
+
+  @@unique([resumeId, skillId])
+}
+
+model ResumeExperience {
+  id String @id @default(uuid())
+  resumeId String
+  experienceId String
+  resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
+  experience Experience @relation(fields:[experienceId], references:[id], onDelete:Cascade)
+  @@unique([resumeId, experienceId])
+}
+
+model ResumeProject {
+  id String @id @default(uuid())
+  resumeId String
+  projectId String
+  resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
+  project Project @relation(fields:[projectId], references:[id], onDelete:Cascade)
+  @@unique([resumeId, projectId])
+}
+
+model ResumeCertificate {
+  id String @id @default(uuid())
+  resumeId String
+  certificateId String
+  resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
+  certificate Certificate @relation(fields:[certificateId], references:[id], onDelete:Cascade)
+  @@unique([resumeId, certificateId])
+}
+
+model ResumeLanguage {
+  id String @id @default(uuid())
+  resumeId String
+  languageId String
+  resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
+  language Language @relation(fields:[languageId], references:[id], onDelete:Cascade)
+  @@unique([resumeId, languageId])
+}
