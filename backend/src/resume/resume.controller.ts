@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { ResumeService } from './resume.service';
@@ -16,16 +24,21 @@ export class ResumeController {
 
   @Get()
   findMe() {
-    return this.resumeService.findMe(this.userId);
+    return this.resumeService.findAll(this.userId);
   }
 
-  @Patch()
-  update(@Body() dto: UpdateResumeDto) {
-    return this.resumeService.update(this.userId, dto);
+  @Get('/:resumeId')
+  findOne(@Param('resumeId') resumeId: string) {
+    return this.resumeService.findOne(this.userId, resumeId);
   }
 
-  @Delete()
-  remove() {
-    return this.resumeService.remove(this.userId);
+  @Patch('/:resumeId')
+  update(@Param('resumeId') resumeId: string, @Body() dto: UpdateResumeDto) {
+    return this.resumeService.update(this.userId, resumeId, dto);
+  }
+
+  @Delete('/:resumeId')
+  remove(@Param('resumeId') resumeId: string) {
+    return this.resumeService.remove(this.userId, resumeId);
   }
 }
