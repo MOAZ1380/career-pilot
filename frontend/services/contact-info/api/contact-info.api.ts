@@ -10,8 +10,13 @@ const BASE_URL = "/contact-info";
 export const createContactInfo = async (
   data: CreateContactInfoDto,
 ): Promise<ContactInfo> => {
-  const response = await axios.post(BASE_URL, data);
-  return response.data;
+  try {
+    const response = await axios.post(BASE_URL, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating contact info:", error);
+    throw error;
+  }
 };
 
 export const getContactInfo = async (): Promise<ContactInfo> => {

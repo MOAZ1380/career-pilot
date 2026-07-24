@@ -3,9 +3,8 @@ import { Education } from "@/services/education/types/education";
 import { Experience } from "@/services/experience/types/experience";
 import { Language } from "@/services/language/types/language";
 import { Skill } from "@/services/skill/types/skill";
-import { Certificate } from "crypto";
-import { Project } from "next/dist/build/swc/types";
-
+import { Certificate } from "@/services/certificate/types/certificate";
+import { Project } from "@/services/project/types/project";
 export interface Profile {
   id: string;
 
