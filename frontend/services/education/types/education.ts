@@ -1,0 +1,28 @@
+export interface Education {
+  id: string;
+  university: string;
+  degree: string;
+  field: string;
+  grade?: string | null;
+
+  startDate: string;
+  endDate?: string | null;
+
+  profileId: string;
+
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateEducationDto {
+  university: string;
+  degree: string;
+  field: string;
+
+  grade?: string;
+
+  startDate: string;
+  endDate?: string;
+}
+
+export interface UpdateEducationDto extends Partial<CreateEducationDto> {}
