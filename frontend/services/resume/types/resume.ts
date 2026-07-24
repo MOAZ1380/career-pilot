@@ -1,3 +1,9 @@
+import { Experience } from "@/services/experience/types/experience";
+import { Language } from "@/services/language/types/language";
+import { Skill } from "@/services/skill/types/skill";
+import { Certificate } from "crypto";
+import { Project } from "next/dist/build/swc/types";
+
 export type ResumeTemplate = "MODERN" | "CLASSIC" | "MINIMAL";
 
 export interface Resume {
@@ -16,11 +22,11 @@ export interface Resume {
 }
 
 export interface ResumeDetails extends Resume {
-  skills: any[];
-  experiences: any[];
-  projects: any[];
-  certificates: any[];
-  languages: any[];
+  skills: Skill[];
+  experiences: Experience[];
+  projects: Project[];
+  certificates: Certificate[];
+  languages: Language[];
 }
 
 export interface CreateResumeDto {
