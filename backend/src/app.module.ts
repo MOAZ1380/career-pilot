@@ -9,6 +9,8 @@ import { EducationModule } from './education/education.module';
 import { CertificateModule } from './certificate/certificate.module';
 import { LanguageModule } from './language/language.module';
 import { ResumeModule } from './resume/resume.module';
+import { AiService } from './ai/ai.service';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -22,8 +24,9 @@ import { ResumeModule } from './resume/resume.module';
     CertificateModule,
     LanguageModule,
     ResumeModule,
+    AiModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [AiService],
 })
 export class AppModule {}
