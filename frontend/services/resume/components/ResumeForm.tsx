@@ -1,8 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createResume } from "../api/resume.service";
 import { CreateResumeDto, ResumeTemplate } from "../types/resume";
+import { getProfile } from "@/services/profile/api/profile.service";
+import { info } from "console";
+import { Certificate } from "crypto";
 
 const initialState: CreateResumeDto = {
   title: "",
@@ -18,9 +21,28 @@ const initialState: CreateResumeDto = {
   languageIds: [],
 };
 
+const initialProfile = {
+  contactInfo: null,
+  skills: [],
+  experiences: [],
+  projects: [],
+  educations: [],
+  certificates: [],
+  languages: [],
+};
+
 export default function ResumeForm() {
   const [form, setForm] = useState<CreateResumeDto>(initialState);
+  const [profile, setProfile] = useState(initialProfile);
 
+  useEffect(() => {
+    const loadProfile = async () => {
+      const data = await getProfile();
+      setProfile(data);
+    };
+
+    loadProfile();
+  }, []);
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement
@@ -120,45 +142,102 @@ export default function ResumeForm() {
         className="rounded border p-2"
       />
 
-      <input
-        name="skillIds"
-        placeholder="Skill IDs (comma separated)"
-        value={form.skillIds.join(", ")}
-        onChange={handleChange}
-        className="rounded border p-2"
-      />
+      <label>Skills</label>
 
-      <input
-        name="experienceIds"
-        placeholder="Experience IDs"
-        value={form.experienceIds.join(", ")}
-        onChange={handleChange}
-        className="rounded border p-2"
-      />
+      {profile.skills.map((skill) => (
+        <label key={skill.id} className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={form.skillIds.includes(skill.id)}
+            onChange={(e) => {
+              setForm((prev) => ({
+                ...prev,
+                skillIds: e.target.checked
+                  ? [...prev.skillIds, skill.id]
+                  : prev.skillIds.filter((id) => id !== skill.id),
+              }));
+            }}
+          />
 
-      <input
-        name="projectIds"
-        placeholder="Project IDs"
-        value={form.projectIds.join(", ")}
-        onChange={handleChange}
-        className="rounded border p-2"
-      />
+          {skill.name}
+        </label>
+      ))}
 
-      <input
-        name="certificateIds"
-        placeholder="Certificate IDs"
-        value={form.certificateIds.join(", ")}
-        onChange={handleChange}
-        className="rounded border p-2"
-      />
+      <label>Experiences</label>
+      {profile.experiences.map((exp) => (
+        <label key={exp.id} className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={form.experienceIds.includes(exp.id)}
+            onChange={(e) => {
+              setForm((prev) => ({
+                ...prev,
+                experienceIds: e.target.checked
+                  ? [...prev.experienceIds, exp.id]
+                  : prev.experienceIds.filter((id) => id !== exp.id),
+              }));
+            }}
+          />
+          {exp.position} - {exp.company}
+        </label>
+      ))}
 
-      <input
-        name="languageIds"
-        placeholder="Language IDs"
-        value={form.languageIds.join(", ")}
-        onChange={handleChange}
-        className="rounded border p-2"
-      />
+      <label>Projects</label>
+      {profile.projects.map((project) => (
+        <label key={project.id} className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={form.projectIds.includes(project.id)}
+            onChange={(e) => {
+              setForm((prev) => ({
+                ...prev,
+                projectIds: e.target.checked
+                  ? [...prev.projectIds, project.id]
+                  : prev.projectIds.filter((id) => id !== project.id),
+              }));
+            }}
+          />
+          {project.name}
+        </label>
+      ))}
+
+      <label>Certificates</label>
+      {profile.certificates.map((certificate) => (
+        <label key={certificate.id} className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={form.certificateIds.includes(certificate.id)}
+            onChange={(e) => {
+              setForm((prev) => ({
+                ...prev,
+                certificateIds: e.target.checked
+                  ? [...prev.certificateIds, certificate.id]
+                  : prev.certificateIds.filter((id) => id !== certificate.id),
+              }));
+            }}
+          />
+          {certificate.name}
+        </label>
+      ))}
+
+      <label>Languages</label>
+      {profile.languages.map((language) => (
+        <label key={language.id} className="flex gap-2">
+          <input
+            type="checkbox"
+            checked={form.languageIds.includes(language.id)}
+            onChange={(e) => {
+              setForm((prev) => ({
+                ...prev,
+                languageIds: e.target.checked
+                  ? [...prev.languageIds, language.id]
+                  : prev.languageIds.filter((id) => id !== language.id),
+              }));
+            }}
+          />
+          {language.language}
+        </label>
+      ))}
 
       <button type="submit" className="rounded bg-black p-2 text-white">
         Save

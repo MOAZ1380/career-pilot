@@ -492,8 +492,7 @@ export class ResumeService {
    */
   async remove(userId: string, resumeId: string) {
     const profile = await this.prisma.profile.findUnique({
-      where: { userId, id: resumeId },
-      select: { id: true },
+      where: { id: userId },
     });
 
     if (!profile) {
@@ -501,8 +500,7 @@ export class ResumeService {
     }
 
     const resume = await this.prisma.resume.findFirst({
-      where: { profileId: profile.id },
-      select: { id: true },
+      where: { id: resumeId },
     });
 
     if (!resume) {
