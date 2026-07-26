@@ -56,4 +56,12 @@ export class CreateResumeDto {
   @ArrayUnique()
   @IsUUID('4', { each: true })
   languageIds!: string[];
+
+  @IsOptional()
+  @MaxLength(4000, { each: true })
+  experienceDescriptions?: Record<string, string[]>;
+
+  @IsOptional()
+  @MaxLength(4000, { each: true })
+  projectDescriptions?: Record<string, string[]>;
 }

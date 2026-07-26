@@ -122,22 +122,32 @@ export class ResumeService {
 
       // Resume Experiences
       if (dto.experienceIds.length) {
-        await tx.resumeExperience.createMany({
-          data: dto.experienceIds.map((experienceId) => ({
-            resumeId: resume.id,
-            experienceId,
-          })),
-        });
+        await Promise.all(
+          dto.experienceIds.map((experienceId) =>
+            tx.resumeExperience.create({
+              data: {
+                resumeId: resume.id,
+                experienceId,
+                customDescription: dto.experienceDescriptions?.[experienceId],
+              },
+            }),
+          ),
+        );
       }
 
       // Resume Projects
       if (dto.projectIds.length) {
-        await tx.resumeProject.createMany({
-          data: dto.projectIds.map((projectId) => ({
-            resumeId: resume.id,
-            projectId,
-          })),
-        });
+        await Promise.all(
+          dto.projectIds.map((projectId) =>
+            tx.resumeProject.create({
+              data: {
+                resumeId: resume.id,
+                projectId,
+                customizedDescription: dto.projectDescriptions?.[projectId],
+              },
+            }),
+          ),
+        );
       }
 
       // Resume Certificates
