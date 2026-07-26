@@ -40,6 +40,11 @@ export class CreateResumeDto {
   @IsArray()
   @ArrayUnique()
   @IsUUID('4', { each: true })
+  educationIds!: string[];
+
+  @IsArray()
+  @ArrayUnique()
+  @IsUUID('4', { each: true })
   projectIds!: string[];
 
   @IsArray()

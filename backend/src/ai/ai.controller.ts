@@ -1,12 +1,14 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { AiService } from './ai.service';
+import { OptimizeResumeDto } from './dto/optimize-resume.dto';
 
 @Controller('ai')
 export class AiController {
   constructor(private readonly aiService: AiService) {}
 
-  @Get()
-  async ai() {
-    return await this.aiService.generateSummary();
+  userId = '1';
+  @Post('/optimize-resume')
+  async optimizeResume(@Body() dto: OptimizeResumeDto) {
+    return this.aiService.optimizeResume(dto.jobDescription, this.userId);
   }
 }

@@ -19,6 +19,11 @@ export class CreateEducationDto {
   @MaxLength(100)
   grade?: string;
 
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  description?: string;
+
   @Type(() => Date)
   @IsDate()
   startDate: Date;

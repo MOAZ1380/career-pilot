@@ -7,10 +7,14 @@ import { ResumeTemplate } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
+import { AiService } from 'src/ai/ai.service';
 
 @Injectable()
 export class ResumeService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly aiService: AiService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   /**
    *
@@ -189,6 +193,41 @@ export class ResumeService {
         },
       });
     });
+  }
+
+  /**
+   *
+   * @param userId
+   * @param jobDescription
+   * @returns
+   */
+  async createResumeByJobDescription(userId: string, jobDescription: string) {
+    const aiResume = await this.aiService.optimizeResume(
+      userId,
+      jobDescription,
+    );
+
+    const dto: CreateResumeDto = {
+      title: 'AI Optimized Resume',
+      template: ResumeTemplate.MODERN,
+      jobDescription,
+
+      generatedSummary: aiResume.summary,
+
+      skillIds: aiResume.skillIds,
+
+      experienceIds: aiResume.experienceIds,
+
+      projectIds: aiResume.projectIds,
+
+      educationIds: aiResume.educationIds,
+
+      certificateIds: aiResume.certificateIds,
+
+      languageIds: aiResume.languageIds,
+    };
+
+    return this.create(userId, dto);
   }
 
   /**
