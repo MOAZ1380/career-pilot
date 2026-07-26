@@ -128,7 +128,8 @@ export class ResumeService {
               data: {
                 resumeId: resume.id,
                 experienceId,
-                customDescription: dto.experienceDescriptions?.[experienceId],
+                customDescription:
+                  dto.experienceDescriptions?.[experienceId] ?? [],
               },
             }),
           ),
@@ -143,7 +144,8 @@ export class ResumeService {
               data: {
                 resumeId: resume.id,
                 projectId,
-                customizedDescription: dto.projectDescriptions?.[projectId],
+                customizedDescription:
+                  dto.projectDescriptions?.[projectId] ?? '',
               },
             }),
           ),
@@ -211,7 +213,7 @@ export class ResumeService {
    * @param jobDescription
    * @returns
    */
-  async createResumeByJobDescription(userId: string, jobDescription: string) {
+  async createByJobDescription(userId: string, jobDescription: string) {
     const aiResume = await this.aiService.optimizeResume(
       userId,
       jobDescription,
@@ -227,6 +229,10 @@ export class ResumeService {
       skillIds: aiResume.skillIds,
 
       experienceIds: aiResume.experienceIds,
+
+      experienceDescriptions: aiResume.experienceDescriptions,
+
+      projectDescriptions: aiResume.projectDescriptions,
 
       projectIds: aiResume.projectIds,
 
@@ -468,6 +474,7 @@ export class ResumeService {
           data: dto.projectIds.map((projectId) => ({
             resumeId: resume.id,
             projectId,
+            customizedDescription: dto.projectDescriptions?.[projectId] ?? '',
           })),
         });
       }

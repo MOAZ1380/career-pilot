@@ -22,6 +22,14 @@ export class ResumeController {
     return this.resumeService.create(this.userId, dto);
   }
 
+  @Post('/by-job-description')
+  createByJobDescription(@Body('jobDescription') jobDescription: string) {
+    return this.resumeService.createByJobDescription(
+      this.userId,
+      jobDescription,
+    );
+  }
+
   @Get()
   findMe() {
     return this.resumeService.findAll(this.userId);

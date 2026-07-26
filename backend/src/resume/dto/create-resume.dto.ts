@@ -63,5 +63,5 @@ export class CreateResumeDto {
 
   @IsOptional()
   @MaxLength(4000, { each: true })
-  projectDescriptions?: Record<string, string[]>;
+  projectDescriptions?: Record<string, string>;
 }

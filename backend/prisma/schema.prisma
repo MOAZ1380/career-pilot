@@ -221,7 +221,7 @@ model ResumeExperience {
   id String @id @default(uuid())
   resumeId String
   experienceId String
-  customDescription String[]?
+  customDescription String[]
   resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
   experience Experience @relation(fields:[experienceId], references:[id], onDelete:Cascade)
   @@unique([resumeId, experienceId])
@@ -231,7 +231,7 @@ model ResumeProject {
   id String @id @default(uuid())
   resumeId String
   projectId String
-  customizedDescription String[]?
+  customizedDescription String
   resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
   project Project @relation(fields:[projectId], references:[id], onDelete:Cascade)
   @@unique([resumeId, projectId])
