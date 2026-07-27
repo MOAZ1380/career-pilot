@@ -65,6 +65,16 @@ DO NOT include it.
 13. Never add fake technologies.
 
 14. Return only the selected IDs from the profile.
+15. When rewriting the summary and descriptions, prioritize using the EXACT
+   keywords, tools, and technical terms mentioned in the Job Description
+   (as long as they already exist in the candidate's profile). ATS systems
+   match exact phrases, so prefer "RESTful API" over "backend services" if
+   the JD uses that exact term.
+
+16. Each experience bullet point should be a single concise sentence
+   (max ~25 words).
+17. Use only plain ASCII characters in text output (no special bullets,
+   smart quotes, or em-dashes).
 
 =========================
 OUTPUT FORMAT

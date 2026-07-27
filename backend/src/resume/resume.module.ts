@@ -8,5 +8,6 @@ import { AiModule } from 'src/ai/ai.module';
   imports: [PrismaModule, AiModule],
   controllers: [ResumeController],
   providers: [ResumeService],
+  exports: [ResumeService],
 })
 export class ResumeModule {}

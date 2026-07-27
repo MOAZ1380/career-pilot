@@ -76,9 +76,8 @@ model Profile {
 model ContactInfo {
   id         String @id @default(uuid())
   phone      String?
-  linkedIn   String?
-  github     String?
-  portfolio  String?
+  email      String?
+  links      String[]
   country    String?
   city       String?
   profileId  String @unique
@@ -153,6 +152,9 @@ model Education {
   updatedAt DateTime @updatedAt
 
   profile Profile @relation(fields:[profileId], references:[id], onDelete:Cascade)
+  
+  resumeEducations ResumeEducation[]
+
   @@index([profileId])
 }
 
@@ -202,6 +204,7 @@ model Resume {
   projects ResumeProject[]
   certificates ResumeCertificate[]
   languages ResumeLanguage[]
+  educations ResumeEducation[]
 
   @@index([profileId])
 }
@@ -253,4 +256,16 @@ model ResumeLanguage {
   resume Resume @relation(fields:[resumeId], references:[id], onDelete:Cascade)
   language Language @relation(fields:[languageId], references:[id], onDelete:Cascade)
   @@unique([resumeId, languageId])
+}
+
+
+model ResumeEducation {
+  id          String @id @default(uuid())
+  resumeId    String
+  educationId String
+
+  resume Resume @relation(fields: [resumeId], references: [id], onDelete: Cascade)
+  education Education @relation(fields: [educationId], references: [id], onDelete: Cascade)
+
+  @@unique([resumeId, educationId])
 }

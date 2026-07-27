@@ -315,6 +315,11 @@ export class ResumeService {
             language: true,
           },
         },
+        educations: {
+          include: {
+            education: true,
+          },
+        },
       },
     });
 
@@ -533,6 +538,11 @@ export class ResumeService {
           languages: {
             include: {
               language: true,
+            },
+          },
+          educations: {
+            include: {
+              education: true,
             },
           },
         },
