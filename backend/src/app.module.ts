@@ -11,6 +11,7 @@ import { LanguageModule } from './language/language.module';
 import { ResumeModule } from './resume/resume.module';
 import { AiService } from './ai/ai.service';
 import { AiModule } from './ai/ai.module';
+import { PdfModule } from './pdf/pdf.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { AiModule } from './ai/ai.module';
     LanguageModule,
     ResumeModule,
     AiModule,
+    PdfModule,
   ],
   controllers: [],
   providers: [AiService],

@@ -38,7 +38,6 @@ export class AiService {
         throw new Error('AI returned an empty response.');
       }
 
-      // Gemini أحيانًا يرجع ```json ... ```
       const cleaned = text
         .replace(/^```json/, '')
         .replace(/^```/, '')
