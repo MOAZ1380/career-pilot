@@ -48,6 +48,7 @@ export function mapResumeToCvData(resume: any, profile?: any) {
           : url.includes('portfolio')
             ? 'Portfolio'
             : 'Website',
+      url,
     })),
 
     // ===== Summary =====

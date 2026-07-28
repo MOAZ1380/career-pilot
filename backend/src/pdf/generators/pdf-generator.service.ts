@@ -8,7 +8,7 @@ import { TDocumentDefinitions } from 'pdfmake/interfaces';
 export class PdfGenerator {
   static generatePdf(cvData: any): Promise<Buffer> {
     const docDefinition: TDocumentDefinitions = {
-      pageMargins: [40, 60, 40, 60],
+      pageMargins: [10, 14, 10, 14],
       content: [
         // Header Section with Name
         {
@@ -46,7 +46,7 @@ export class PdfGenerator {
               : []),
           ],
           style: 'contact',
-          margin: [0, 0, 0, 4],
+          margin: [0, 0, 0, 0],
           alignment: 'center',
         },
 
@@ -64,7 +64,7 @@ export class PdfGenerator {
                   },
                 ]),
                 style: 'links',
-                margin: [0, 0, 0, 8],
+                margin: [0, 0, 0, 4],
                 alignment: 'center',
               },
             ]
@@ -77,13 +77,13 @@ export class PdfGenerator {
               type: 'line',
               x1: 0,
               y1: 0,
-              x2: 515,
+              x2: 575.28,
               y2: 0,
               lineWidth: 1.5,
               lineColor: '#0066cc',
             },
           ],
-          margin: [0, 0, 0, 8],
+          margin: [0, 0, 0, 2],
         },
 
         // Summary Section
@@ -95,24 +95,9 @@ export class PdfGenerator {
               },
               {
                 text: cvData.summary,
-                margin: [0, 0, 0, 16],
+                margin: [0, 0, 0, 0],
                 alignment: 'justify',
-                lineHeight: 1.5,
-              },
-            ]
-          : []),
-
-        // Skills Section
-        ...(cvData.skills && cvData.skills.length > 0
-          ? [
-              {
-                text: 'SKILLS',
-                style: 'sectionHeader',
-              },
-              {
-                text: cvData.skills.join('  •  '),
-                margin: [0, 0, 0, 16],
-                lineHeight: 1.5,
+                lineHeight: 1.2,
               },
             ]
           : []),
@@ -126,21 +111,23 @@ export class PdfGenerator {
               },
               ...cvData.experiences.flatMap((exp: any) => [
                 {
+                  unbreakable: true,
                   columns: [
                     {
                       stack: [
                         {
-                          text: exp.jobTitle || '',
-                          style: 'jobTitle',
-                        },
-                        {
                           text: [
-                            { text: exp.companyName || '', style: 'company' },
+                            { text: exp.jobTitle || '', style: 'jobTitle' },
+                            exp.companyName
+                              ? {
+                                  text: ` - ${exp.companyName}`,
+                                  style: 'company',
+                                }
+                              : {},
                             exp.location
                               ? { text: ` | ${exp.location}`, style: 'company' }
                               : {},
                           ],
-                          margin: [0, 2, 0, 0],
                         },
                       ],
                       width: '*',
@@ -166,32 +153,13 @@ export class PdfGenerator {
                       width: 'auto',
                     },
                   ],
-                  margin: [0, 0, 0, 4],
+                  margin: [0, 0, 0, 0],
                 },
-                ...(exp.links && exp.links.length > 0
-                  ? [
-                      {
-                        text: exp.links.flatMap((link: any, index: number) => [
-                          ...(index > 0
-                            ? [{ text: '  |  ', color: '#666666' }]
-                            : []),
-                          {
-                            text: link.type,
-                            link: link.url,
-                            color: '#0066cc',
-                            decoration: 'underline',
-                          },
-                        ]),
-                        style: 'experienceLinks',
-                        margin: [0, 0, 0, 3],
-                      },
-                    ]
-                  : []),
                 {
                   text: exp.description || '',
-                  margin: [0, 0, 0, 16],
+                  margin: [0, 0, 0, 6],
                   alignment: 'justify',
-                  lineHeight: 1.5,
+                  lineHeight: 1.2,
                 },
               ]),
             ]
@@ -206,10 +174,29 @@ export class PdfGenerator {
               },
               ...cvData.projects.flatMap((project: any) => [
                 {
+                  unbreakable: true,
                   columns: [
                     {
-                      text: project.title || '',
-                      style: 'jobTitle',
+                      text: [
+                        { text: project.title || '', style: 'jobTitle' },
+                        ...(project.links && project.links.length > 0
+                          ? project.links.flatMap(
+                              (link: any, index: number) => [
+                                {
+                                  text: index === 0 ? '   -   ' : '   |   ',
+                                  color: '#666666',
+                                },
+                                {
+                                  text: link.type,
+                                  link: link.url,
+                                  color: '#0066cc',
+                                  decoration: 'underline',
+                                  fontSize: 9,
+                                },
+                              ],
+                            )
+                          : []),
+                      ],
                       width: '*',
                     },
                     {
@@ -226,39 +213,18 @@ export class PdfGenerator {
                   margin: [0, 0, 0, 3],
                   alignment: 'justify',
                 },
-                ...(project.links && project.links.length > 0
-                  ? [
-                      {
-                        text: project.links.flatMap(
-                          (link: any, index: number) => [
-                            ...(index > 0
-                              ? [{ text: '  |  ', color: '#666666' }]
-                              : []),
-                            {
-                              text: link.type,
-                              link: link.url,
-                              color: '#0066cc',
-                              decoration: 'underline',
-                            },
-                          ],
-                        ),
-                        style: 'projectLinks',
-                        margin: [0, 0, 0, 3],
-                      },
-                    ]
-                  : []),
                 ...(project.technologies && project.technologies.length > 0
                   ? [
                       {
                         text: `Technologies: ${project.technologies.join(', ')}`,
                         style: 'technologies',
-                        margin: [0, 0, 0, 16],
+                        margin: [0, 0, 0, 8],
                       },
                     ]
                   : [
                       {
                         text: '',
-                        margin: [0, 0, 0, 16],
+                        margin: [0, 0, 0, 6],
                       },
                     ]),
               ]),
@@ -274,6 +240,7 @@ export class PdfGenerator {
               },
               ...cvData.education.flatMap((edu: any) => [
                 {
+                  unbreakable: true,
                   columns: [
                     {
                       stack: [
@@ -315,114 +282,17 @@ export class PdfGenerator {
                   ? [
                       {
                         text: edu.description,
-                        margin: [0, 0, 0, 16],
+                        margin: [0, 0, 0, 8],
                         alignment: 'justify',
-                        lineHeight: 1.5,
+                        lineHeight: 1.2,
                       },
                     ]
                   : [
                       {
                         text: '',
-                        margin: [0, 0, 0, 16],
+                        margin: [0, 0, 0, 6],
                       },
                     ]),
-              ]),
-            ]
-          : []),
-
-        // Activities Section
-        ...(cvData.activities && cvData.activities.length > 0
-          ? [
-              {
-                text: 'ACTIVITIES',
-                style: 'sectionHeader',
-              },
-              ...cvData.activities.flatMap((activity: any) => [
-                {
-                  columns: [
-                    {
-                      stack: [
-                        {
-                          text: activity.title || '',
-                          style: 'jobTitle',
-                        },
-                        ...(activity.role
-                          ? [
-                              {
-                                text: activity.role,
-                                style: 'company',
-                                margin: [0, 2, 0, 0],
-                              },
-                            ]
-                          : []),
-                      ],
-                      width: '*',
-                    },
-                    {
-                      text: `${activity.startDate || ''} - ${activity.currentlyOngoing ? 'Present' : activity.endDate || ''}`,
-                      style: 'date',
-                      alignment: 'right',
-                      width: 'auto',
-                    },
-                  ],
-                  margin: [0, 0, 0, 4],
-                },
-                {
-                  text: activity.description || '',
-                  margin: [0, 0, 0, 16],
-                  alignment: 'justify',
-                  lineHeight: 1.5,
-                },
-              ]),
-            ]
-          : []),
-
-        // Volunteering Section
-        ...(cvData.volunteering && cvData.volunteering.length > 0
-          ? [
-              {
-                text: 'VOLUNTEERING',
-                style: 'sectionHeader',
-              },
-              ...cvData.volunteering.flatMap((vol: any) => [
-                {
-                  columns: [
-                    {
-                      stack: [
-                        {
-                          text: vol.role || '',
-                          style: 'jobTitle',
-                        },
-                        {
-                          text: [
-                            {
-                              text: vol.organizationName || '',
-                              style: 'company',
-                            },
-                            vol.location
-                              ? { text: ` | ${vol.location}`, style: 'company' }
-                              : {},
-                          ],
-                          margin: [0, 2, 0, 0],
-                        },
-                      ],
-                      width: '*',
-                    },
-                    {
-                      text: `${vol.startDate || ''} - ${vol.currentlyVolunteering ? 'Present' : vol.endDate || ''}`,
-                      style: 'date',
-                      alignment: 'right',
-                      width: 'auto',
-                    },
-                  ],
-                  margin: [0, 0, 0, 4],
-                },
-                {
-                  text: vol.description || '',
-                  margin: [0, 0, 0, 16],
-                  alignment: 'justify',
-                  lineHeight: 1.5,
-                },
               ]),
             ]
           : []),
@@ -436,18 +306,24 @@ export class PdfGenerator {
               },
               ...cvData.certificates.flatMap((cert: any) => [
                 {
+                  unbreakable: true,
                   columns: [
                     {
-                      stack: [
-                        {
-                          text: cert.name || '',
-                          style: 'jobTitle',
-                        },
-                        {
-                          text: cert.issuer || '',
-                          style: 'company',
-                          margin: [0, 2, 0, 0],
-                        },
+                      text: [
+                        { text: cert.name || '', style: 'jobTitle' },
+                        cert.issuer
+                          ? {
+                              text: ` - ${cert.issuer}`,
+                              style: 'company',
+                              ...(cert.url
+                                ? {
+                                    link: cert.url,
+                                    color: '#0066cc',
+                                    decoration: 'underline',
+                                  }
+                                : {}),
+                            }
+                          : {},
                       ],
                       width: '*',
                     },
@@ -460,34 +336,37 @@ export class PdfGenerator {
                   ],
                   margin: [0, 0, 0, 4],
                 },
-                ...(cert.url
-                  ? [
-                      {
-                        text: 'View Certificate',
-                        link: cert.url,
-                        style: 'links',
-                        color: '#0066cc',
-                        decoration: 'underline',
-                        margin: [0, 0, 0, 3],
-                      },
-                    ]
-                  : []),
                 ...(cert.summary
                   ? [
                       {
                         text: cert.summary,
-                        margin: [0, 0, 0, 16],
+                        margin: [0, 0, 0, 8],
                         alignment: 'justify',
-                        lineHeight: 1.5,
+                        lineHeight: 1.2,
                       },
                     ]
                   : [
                       {
                         text: '',
-                        margin: [0, 0, 0, 16],
+                        margin: [0, 0, 0, 8],
                       },
                     ]),
               ]),
+            ]
+          : []),
+
+        // Skills Section
+        ...(cvData.skills && cvData.skills.length > 0
+          ? [
+              {
+                text: 'SKILLS',
+                style: 'sectionHeader',
+              },
+              {
+                text: cvData.skills.join('  •  '),
+                margin: [0, 0, 0, 0],
+                lineHeight: 1.2,
+              },
             ]
           : []),
       ],
@@ -497,13 +376,13 @@ export class PdfGenerator {
           bold: true,
           color: '#1a1a1a',
           characterSpacing: 2,
-          margin: [0, 0, 0, 2],
+          margin: [0, 0, 0, 0],
         },
         subheader: {
           fontSize: 12,
           color: '#4a4a4a',
           bold: false,
-          margin: [0, 0, 0, 8],
+          margin: [0, 0, 0, 0],
         },
         contact: {
           fontSize: 9,
@@ -514,10 +393,10 @@ export class PdfGenerator {
           color: '#555555',
         },
         sectionHeader: {
-          fontSize: 13,
+          fontSize: 12,
           bold: true,
           color: '#1a1a1a',
-          margin: [0, 12, 0, 6],
+          margin: [0, 8, 0, 4],
           decoration: 'underline',
           decorationStyle: 'solid',
           decorationColor: '#0066cc',
@@ -556,9 +435,9 @@ export class PdfGenerator {
         },
       },
       defaultStyle: {
-        fontSize: 10,
+        fontSize: 9.5,
         color: '#2a2a2a',
-        lineHeight: 1.4,
+        lineHeight: 1.2,
       },
     };
 
