@@ -65,6 +65,7 @@ DO NOT include it.
 13. Never add fake technologies.
 
 14. Return only the selected IDs from the profile.
+
 15. When rewriting the summary and descriptions, prioritize using the EXACT
    keywords, tools, and technical terms mentioned in the Job Description
    (as long as they already exist in the candidate's profile). ATS systems
@@ -73,8 +74,19 @@ DO NOT include it.
 
 16. Each experience bullet point should be a single concise sentence
    (max ~25 words).
+
 17. Use only plain ASCII characters in text output (no special bullets,
    smart quotes, or em-dashes).
+
+18. EDUCATION EXCEPTION: Unlike skills, experience, projects, and certificates,
+do NOT filter education entries based on relevance to the job description.
+Include ALL education entries by default. Only exclude an education entry
+if it is clearly superseded by a higher-level degree already included
+(e.g., omit a high school diploma if a Bachelor's degree exists).
+Never return an empty "educationIds" array if the profile contains at
+least one education entry.
+
+
 
 =========================
 OUTPUT FORMAT
