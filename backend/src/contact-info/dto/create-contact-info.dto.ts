@@ -7,19 +7,12 @@ export class CreateContactInfoDto {
   phone?: string;
 
   @IsOptional()
-  @IsUrl()
-  @MaxLength(255)
-  linkedIn?: string;
+  @IsString()
+  @MaxLength(100)
+  email?: string;
 
   @IsOptional()
-  @IsUrl()
-  @MaxLength(255)
-  github?: string;
-
-  @IsOptional()
-  @IsUrl()
-  @MaxLength(255)
-  portfolio?: string;
+  links: string[];
 
   @IsOptional()
   @IsString()

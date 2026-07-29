@@ -8,9 +8,7 @@ export class PdfController {
 
   @Get(':resumeId')
   async downloadPdf(@Param('resumeId') resumeId: string, @Res() res: Response) {
-    const pdfBuffer = await this.pdfService.generatePdf(
-      (resumeId = '2020adf0-5ddf-47d4-90de-6f8ff8ebc226'),
-    );
+    const pdfBuffer = await this.pdfService.generatePdf(resumeId);
 
     res.set({
       'Content-Type': 'application/pdf',
