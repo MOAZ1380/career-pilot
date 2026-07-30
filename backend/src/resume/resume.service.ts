@@ -26,7 +26,7 @@ export class ResumeService {
     // Check if profile exists
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
-      select: { id: true },
+      select: { id: true, bio: true },
     });
 
     if (!profile) {
@@ -195,43 +195,7 @@ export class ResumeService {
         });
       }
 
-      return tx.resume.findUnique({
-        where: {
-          id: resume.id,
-        },
-        include: {
-          skills: {
-            include: {
-              skill: true,
-            },
-          },
-          experiences: {
-            include: {
-              experience: true,
-            },
-          },
-          projects: {
-            include: {
-              project: true,
-            },
-          },
-          educations: {
-            include: {
-              education: true,
-            },
-          },
-          certificates: {
-            include: {
-              certificate: true,
-            },
-          },
-          languages: {
-            include: {
-              language: true,
-            },
-          },
-        },
-      });
+      return { message: 'Resume created successfully', id: resume.id };
     });
   }
 
