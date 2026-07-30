@@ -235,65 +235,77 @@ export class PdfGenerator {
         ...(cvData.education && cvData.education.length > 0
           ? [
               {
-                text: 'EDUCATION',
-                style: 'sectionHeader',
-              },
-              ...cvData.education.flatMap((edu: any) => [
-                {
-                  unbreakable: true,
-                  columns: [
+                unbreakable: true,
+                stack: [
+                  {
+                    text: 'EDUCATION',
+                    style: 'sectionHeader',
+                  },
+                  ...cvData.education.flatMap((edu: any) => [
                     {
-                      stack: [
+                      unbreakable: true,
+                      columns: [
                         {
-                          text: `${edu.degree || ''} in ${edu.fieldOfStudy || ''}`,
-                          style: 'jobTitle',
-                        },
-                        {
-                          text: [
-                            { text: edu.schoolName || '', style: 'company' },
-                            edu.location
-                              ? { text: ` | ${edu.location}`, style: 'company' }
-                              : {},
+                          stack: [
+                            {
+                              text: [
+                                {
+                                  text: `${edu.degree || ''} in ${edu.fieldOfStudy || ''}`,
+                                  style: 'jobTitle',
+                                },
+                                edu.schoolName
+                                  ? {
+                                      text: ` - ${edu.schoolName}`,
+                                      style: 'company',
+                                    }
+                                  : {},
+                                edu.location
+                                  ? {
+                                      text: ` | ${edu.location}`,
+                                      style: 'company',
+                                    }
+                                  : {},
+                              ],
+                            },
+                            ...(edu.grade
+                              ? [
+                                  {
+                                    text: `Grade: ${edu.grade}`,
+                                    style: 'company',
+                                    margin: [0, 2, 0, 0],
+                                  },
+                                ]
+                              : []),
                           ],
-                          margin: [0, 2, 0, 0],
+                          width: '*',
                         },
-                        ...(edu.grade
-                          ? [
-                              {
-                                text: `Grade: ${edu.grade}`,
-                                style: 'company',
-                                margin: [0, 2, 0, 0],
-                              },
-                            ]
-                          : []),
+                        {
+                          text: `${edu.startDate || ''} - ${edu.currentlyStudying ? 'Present' : edu.endDate || ''}`,
+                          style: 'date',
+                          alignment: 'right',
+                          width: 'auto',
+                        },
                       ],
-                      width: '*',
+                      margin: [0, 0, 0, 4],
                     },
-                    {
-                      text: `${edu.startDate || ''} - ${edu.currentlyStudying ? 'Present' : edu.endDate || ''}`,
-                      style: 'date',
-                      alignment: 'right',
-                      width: 'auto',
-                    },
-                  ],
-                  margin: [0, 0, 0, 4],
-                },
-                ...(edu.description
-                  ? [
-                      {
-                        text: edu.description,
-                        margin: [0, 0, 0, 8],
-                        alignment: 'justify',
-                        lineHeight: 1.2,
-                      },
-                    ]
-                  : [
-                      {
-                        text: '',
-                        margin: [0, 0, 0, 6],
-                      },
-                    ]),
-              ]),
+                    ...(edu.description
+                      ? [
+                          {
+                            text: edu.description,
+                            margin: [0, 0, 0, 8],
+                            alignment: 'justify',
+                            lineHeight: 1.2,
+                          },
+                        ]
+                      : [
+                          {
+                            text: '',
+                            margin: [0, 0, 0, 6],
+                          },
+                        ]),
+                  ]),
+                ],
+              },
             ]
           : []),
 
