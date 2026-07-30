@@ -30,32 +30,33 @@ export class CreateResumeDto {
   @IsArray()
   @ArrayUnique()
   @IsUUID('4', { each: true })
-  skillIds!: string[];
+  skillIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
   @IsUUID('4', { each: true })
-  experienceIds!: string[];
+  experienceIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
   @IsUUID('4', { each: true })
-  educationIds!: string[];
+  educationIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
   @IsUUID('4', { each: true })
-  projectIds!: string[];
+  projectIds: string[] = [];
+
+  @IsArray()
+  @IsOptional()
+  @ArrayUnique()
+  @IsUUID('4', { each: true })
+  certificateIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
   @IsUUID('4', { each: true })
-  certificateIds!: string[];
-
-  @IsArray()
-  @ArrayUnique()
-  @IsUUID('4', { each: true })
-  languageIds!: string[];
+  languageIds: string[] = [];
 
   @IsOptional()
   @MaxLength(4000, { each: true })

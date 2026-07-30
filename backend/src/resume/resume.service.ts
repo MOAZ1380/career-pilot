@@ -118,7 +118,7 @@ export class ResumeService {
           title: dto.title,
           template: dto.template,
           jobDescription: dto.jobDescription,
-          generatedSummary: dto.generatedSummary,
+          generatedSummary: dto.generatedSummary?.trim() || profile.bio || null,
           profileId: profile.id,
         },
       });
