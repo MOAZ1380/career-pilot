@@ -86,6 +86,19 @@ export class ResumeService {
         throw new BadRequestException('One or more certificates are invalid.');
       }
 
+      // validation Educations
+      const educations = await tx.education.findMany({
+        where: {
+          id: { in: dto.educationIds },
+          profileId: profile.id,
+        },
+        select: { id: true },
+      });
+
+      if (educations.length !== dto.educationIds.length) {
+        throw new BadRequestException('One or more educations are invalid.');
+      }
+
       // Validate Languages
       const languages = await tx.language.findMany({
         where: {
@@ -152,6 +165,16 @@ export class ResumeService {
         );
       }
 
+      // Resume Educations
+      if (dto.educationIds.length) {
+        await tx.resumeEducation.createMany({
+          data: dto.educationIds.map((educationId) => ({
+            resumeId: resume.id,
+            educationId,
+          })),
+        });
+      }
+
       // Resume Certificates
       if (dto.certificateIds.length) {
         await tx.resumeCertificate.createMany({
@@ -190,6 +213,11 @@ export class ResumeService {
           projects: {
             include: {
               project: true,
+            },
+          },
+          educations: {
+            include: {
+              education: true,
             },
           },
           certificates: {

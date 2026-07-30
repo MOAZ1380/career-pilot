@@ -393,10 +393,10 @@ export class PdfGenerator {
           color: '#555555',
         },
         sectionHeader: {
-          fontSize: 12,
+          fontSize: 14,
           bold: true,
           color: '#1a1a1a',
-          margin: [0, 8, 0, 4],
+          margin: [0, 15, 0, 10],
           decoration: 'underline',
           decorationStyle: 'solid',
           decorationColor: '#0066cc',
@@ -421,7 +421,7 @@ export class PdfGenerator {
           italics: true,
         },
         technologies: {
-          fontSize: 9,
+          fontSize: 10,
           color: '#0066cc',
           bold: false,
         },
@@ -435,7 +435,7 @@ export class PdfGenerator {
         },
       },
       defaultStyle: {
-        fontSize: 9.5,
+        fontSize: 11,
         color: '#2a2a2a',
         lineHeight: 1.2,
       },
