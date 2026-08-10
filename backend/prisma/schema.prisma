@@ -35,18 +35,30 @@ enum ResumeTemplate {
   MINIMAL
 }
 
-model User {
-  id          String   @id @default(uuid())
-  username    String   @unique
-  email       String   @unique
-  password    String
-  isVerified  Boolean  @default(false)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+enum OtpPurpose {
+  EMAIL_VERIFICATION
+  PASSWORD_RESET
+}
 
-  profile     Profile?
+model User {
+  id                    String   @id @default(uuid())
+  username              String   @unique
+  email                 String   @unique
+  passwordHash          String
+  isVerified            Boolean  @default(false)
+  lastLoginAt           DateTime?
+  failedLoginAttempts   Int      @default(0)
+  lockedUntil           DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+
+  profile               Profile?
+  refreshTokens         RefreshToken[]
+  otps                  Otp[]
 
   @@index([email])
+  @@index([username])
+  @@index([lockedUntil])
 }
 
 model Profile {
@@ -268,4 +280,33 @@ model ResumeEducation {
   education Education @relation(fields: [educationId], references: [id], onDelete: Cascade)
 
   @@unique([resumeId, educationId])
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+model Otp {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  codeHash  String
+  purpose   OtpPurpose
+  expiresAt DateTime
+  attempts  Int         @default(0)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  @@index([userId])
+  @@index([purpose])
+  @@index([expiresAt])
 }
