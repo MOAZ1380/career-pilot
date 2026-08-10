@@ -1,9 +1,19 @@
-import { Body, Controller, Delete, Get, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Patch,
+  Post,
+  UseGuards,
+} from '@nestjs/common';
 import { ContactInfoService } from './contact-info.service';
 import { CreateContactInfoDto } from './dto/create-contact-info.dto';
 import { UpdateContactInfoDto } from './dto/update-contact-info.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('contact-info')
+@UseGuards(JwtAuthGuard)
 export class ContactInfoController {
   constructor(private readonly contactInfoService: ContactInfoService) {}
 
