@@ -52,7 +52,7 @@ class EnvironmentVariables {
 
   @IsOptional()
   @IsPort()
-  SMTP_PORT: number;
+  SMTP_PORT: string;
 
   @IsOptional()
   @IsString()
