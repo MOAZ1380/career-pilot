@@ -5,6 +5,7 @@
 This document defines the complete authentication system for CareerPilot, a production-ready Resume Builder platform.
 
 ### Core Principles
+
 - **Clean Architecture**: Separation of concerns with clear layer boundaries
 - **Security First**: No sensitive data leakage; secure by default
 - **Scalability**: Support for future features (OAuth, 2FA, MFA, Redis sessions)
@@ -130,6 +131,7 @@ src/
 ## Data Model (Prisma)
 
 ### User Model
+
 ```prisma
 model User {
   id                    String   @id @default(uuid())
@@ -142,10 +144,10 @@ model User {
   lockedUntil           DateTime?
   createdAt             DateTime @default(now())
   updatedAt             DateTime @updatedAt
-  
+
   refreshTokens         RefreshToken[]
   otps                  Otp[]
-  
+
   @@index([email])
   @@index([username])
   @@index([lockedUntil])
@@ -153,6 +155,7 @@ model User {
 ```
 
 ### RefreshToken Model
+
 ```prisma
 model RefreshToken {
   id        String   @id @default(uuid())
@@ -162,13 +165,14 @@ model RefreshToken {
   expiresAt DateTime
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([userId])
   @@index([expiresAt])
 }
 ```
 
 ### OTP Model
+
 ```prisma
 enum OtpPurpose {
   EMAIL_VERIFICATION
@@ -185,7 +189,7 @@ model Otp {
   attempts  Int         @default(0)
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
-  
+
   @@index([userId])
   @@index([purpose])
   @@index([expiresAt])
@@ -197,6 +201,7 @@ model Otp {
 ## Service Responsibilities
 
 ### AuthService
+
 - **Register**: Validate, create user, generate OTP
 - **Verify Email**: Validate OTP, mark user as verified
 - **Resend OTP**: Rate limit, generate new OTP
@@ -210,6 +215,7 @@ model Otp {
 - **Get Current User**: Return sanitized user data
 
 ### TokenService
+
 - Generate access token (JWT, 15 minutes)
 - Generate refresh token (JWT, 7 days)
 - Verify tokens
@@ -218,6 +224,7 @@ model Otp {
 - Extract JWT payload
 
 ### OtpService
+
 - Generate secure 6-digit OTP
 - Hash OTP (bcrypt)
 - Verify OTP
@@ -227,6 +234,7 @@ model Otp {
 - Check resend cooldown (60 seconds)
 
 ### EmailService
+
 - Send verification email
 - Send password reset email
 - Use HTML templates
@@ -234,6 +242,7 @@ model Otp {
 - No logging of OTP values
 
 ### UsersService
+
 - Find user by ID, email, username
 - Create user
 - Update verification status
@@ -247,6 +256,7 @@ model Otp {
 ## Authentication Flows
 
 ### Registration Flow
+
 ```
 1. User submits register form
    ├─ Validate DTO
@@ -265,6 +275,7 @@ model Otp {
 ```
 
 ### Email Verification Flow
+
 ```
 1. User submits OTP
    ├─ Normalize email
@@ -285,6 +296,7 @@ model Otp {
 ```
 
 ### Login Flow
+
 ```
 1. User submits credentials
    ├─ Normalize email
@@ -305,6 +317,7 @@ model Otp {
 ```
 
 ### Refresh Token Flow
+
 ```
 1. Client submits refresh token
    ├─ Verify refresh JWT
@@ -324,6 +337,7 @@ model Otp {
 ```
 
 ### Password Reset Flow
+
 ```
 Stage 1 - Forgot Password:
 1. User submits email
@@ -373,12 +387,14 @@ Stage 3 - Reset Password:
 ## Security Decisions
 
 ### 1. Password Security
+
 - Use bcrypt with salt rounds = 12
 - Never store plaintext passwords
 - Password policy: 8+ chars, 1 uppercase, 1 lowercase, 1 number, 1 special char
 - Never return passwordHash in responses
 
 ### 2. Token Management
+
 - **Access Token**: Short-lived (15 minutes), in Authorization header or memory
 - **Refresh Token**: Long-lived (7 days), hashed in database, rotated on use
 - Separate secrets for access and refresh tokens
@@ -386,6 +402,7 @@ Stage 3 - Reset Password:
 - Refresh token rotation prevents token reuse attacks
 
 ### 3. OTP Security
+
 - Cryptographically secure 6-digit OTP (not just random)
 - Hashed with bcrypt before storage
 - 10-minute expiration
@@ -395,18 +412,21 @@ Stage 3 - Reset Password:
 - Purpose-specific (EMAIL_VERIFICATION vs PASSWORD_RESET)
 
 ### 4. Account Lockout
+
 - Lock after 5 failed login attempts
 - Lock duration: 15 minutes
 - Reset failed attempts after successful login
 - Prevents brute force attacks
 
 ### 5. Email Enumeration Prevention
+
 - Forgot-password endpoint doesn't reveal if email exists
 - Same generic response for both found and not-found cases
 - Resend-OTP also uses generic response
 - Prevents attackers from finding valid emails
 
 ### 6. Refresh Token Storage
+
 - Never store plaintext refresh tokens
 - Only store bcrypt hashes
 - One-to-many relationship (User has many RefreshTokens)
@@ -414,12 +434,14 @@ Stage 3 - Reset Password:
 - Tokens are compared as: bcrypt.compare(suppliedToken, storedHash)
 
 ### 7. Database Transactions
+
 - User creation + OTP creation are transactional
 - Password reset invalidates all sessions atomically
 - Email sending happens OUTSIDE transactions
 - If email fails, user is already created (allows resend)
 
 ### 8. Cookie vs Header Strategy
+
 - **Refresh Token**: HttpOnly cookie (secure, not accessible to JS, survives tab close)
   - Secure: true (HTTPS only)
   - SameSite: Strict (CSRF protection)
@@ -429,6 +451,7 @@ Stage 3 - Reset Password:
 - Rationale: Refresh token is sensitive and long-lived; access token is short-lived
 
 ### 9. Rate Limiting
+
 - Register: 5 per hour per IP
 - Login: 10 per hour per IP (stricter after failed attempts)
 - Verify-email: 10 per hour per user
@@ -438,6 +461,7 @@ Stage 3 - Reset Password:
 - Refresh: 30 per hour per user (multiple devices)
 
 ### 10. Sensitive Data Leakage Prevention
+
 - Never return passwordHash in any response
 - Never return refresh token hash
 - Never return OTP or OTP hash
@@ -486,30 +510,31 @@ AppModule
 
 ## HTTP Status Codes
 
-| Status | Endpoint | Reason |
-|--------|----------|--------|
-| 201 | POST /auth/register | User created |
-| 200 | POST /auth/verify-email | Verification successful |
-| 200 | POST /auth/resend-verification-otp | OTP sent |
-| 200 | POST /auth/login | Login successful |
-| 200 | POST /auth/refresh | Token refreshed |
-| 200 | POST /auth/logout | Logout successful |
-| 200 | POST /auth/logout-all | All devices logged out |
-| 200 | POST /auth/forgot-password | Reset email sent (or generic) |
-| 200 | POST /auth/verify-reset-otp | OTP verified |
-| 200 | POST /auth/reset-password | Password reset successful |
-| 200 | GET /auth/me | User data retrieved |
-| 400 | Any endpoint | Validation error |
-| 401 | Login/Refresh/JWT | Unauthorized |
-| 403 | Login (unverified) | Forbidden |
-| 409 | Register | Duplicate email/username |
-| 429 | Any endpoint | Rate limit exceeded |
+| Status | Endpoint                           | Reason                        |
+| ------ | ---------------------------------- | ----------------------------- |
+| 201    | POST /auth/register                | User created                  |
+| 200    | POST /auth/verify-email            | Verification successful       |
+| 200    | POST /auth/resend-verification-otp | OTP sent                      |
+| 200    | POST /auth/login                   | Login successful              |
+| 200    | POST /auth/refresh                 | Token refreshed               |
+| 200    | POST /auth/logout                  | Logout successful             |
+| 200    | POST /auth/logout-all              | All devices logged out        |
+| 200    | POST /auth/forgot-password         | Reset email sent (or generic) |
+| 200    | POST /auth/verify-reset-otp        | OTP verified                  |
+| 200    | POST /auth/reset-password          | Password reset successful     |
+| 200    | GET /auth/me                       | User data retrieved           |
+| 400    | Any endpoint                       | Validation error              |
+| 401    | Login/Refresh/JWT                  | Unauthorized                  |
+| 403    | Login (unverified)                 | Forbidden                     |
+| 409    | Register                           | Duplicate email/username      |
+| 429    | Any endpoint                       | Rate limit exceeded           |
 
 ---
 
 ## JWT Payload Structure
 
 ### Access Token
+
 ```json
 {
   "sub": "user-id",
@@ -521,6 +546,7 @@ AppModule
 ```
 
 ### Refresh Token
+
 ```json
 {
   "sub": "user-id",
@@ -531,6 +557,7 @@ AppModule
 ```
 
 ### Reset Token
+
 ```json
 {
   "sub": "user-id",
@@ -582,30 +609,35 @@ APP_URL=https://careerpilot.com
 ## Future Scalability
 
 ### Redis Integration
+
 - Cache user sessions
 - Cache OTP validation attempts
 - Distributed rate limiting
 - Session management across servers
 
 ### BullMQ Integration
+
 - Queue email sending
 - Retry failed emails
 - Background job processing
 - Scheduled OTP cleanup
 
 ### OAuth Integration
+
 - Google OAuth
 - GitHub OAuth
 - Microsoft OAuth
 - Existing structure supports adding strategies
 
 ### 2FA/MFA
+
 - TOTP-based 2FA
 - SMS-based 2FA
 - Backup codes
 - Trust device option
 
 ### Other Features
+
 - Email change verification
 - Phone verification
 - Account deletion
@@ -617,6 +649,7 @@ APP_URL=https://careerpilot.com
 ## Testing Strategy
 
 All services have corresponding `.spec.ts` test files with:
+
 - Unit tests for core business logic
 - Mock dependencies
 - Test fixtures
