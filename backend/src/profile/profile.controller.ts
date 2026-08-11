@@ -10,6 +10,8 @@ import {
 import { ProfileService } from './profile.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
+import type { JwtAccessPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('profile')
@@ -17,26 +19,23 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
-  // Temporary until JWT is added
-  private readonly userId = '1';
-
   @Post()
-  create(@Body() dto: CreateProfileDto) {
-    return this.profileService.create(this.userId, dto);
+  create(@CurrentUser() user: JwtAccessPayload, @Body() dto: CreateProfileDto) {
+    return this.profileService.create(user.sub, dto);
   }
 
   @Get()
-  findMe() {
-    return this.profileService.findMe(this.userId);
+  findMe(@CurrentUser() user: JwtAccessPayload) {
+    return this.profileService.findMe(user.sub);
   }
 
   @Patch()
-  update(@Body() dto: UpdateProfileDto) {
-    return this.profileService.update(this.userId, dto);
+  update(@CurrentUser() user: JwtAccessPayload, @Body() dto: UpdateProfileDto) {
+    return this.profileService.update(user.sub, dto);
   }
 
   @Delete()
-  remove() {
-    return this.profileService.remove(this.userId);
+  remove(@CurrentUser() user: JwtAccessPayload) {
+    return this.profileService.remove(user.sub);
   }
 }

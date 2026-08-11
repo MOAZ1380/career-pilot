@@ -22,21 +22,21 @@ export class ContactInfoController {
 
   @Post()
   create(@Body() dto: CreateContactInfoDto) {
-    return this.contactInfoService.create(this.userId, dto);
+    return this.contactInfoService.create(user.sub, dto);
   }
 
   @Get()
   findMe() {
-    return this.contactInfoService.findMe(this.userId);
+    return this.contactInfoService.findMe(user.sub);
   }
 
   @Patch()
   update(@Body() dto: UpdateContactInfoDto) {
-    return this.contactInfoService.update(this.userId, dto);
+    return this.contactInfoService.update(user.sub, dto);
   }
 
   @Delete()
   remove() {
-    return this.contactInfoService.remove(this.userId);
+    return this.contactInfoService.remove(user.sub);
   }
 }

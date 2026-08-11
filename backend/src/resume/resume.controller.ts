@@ -18,38 +18,46 @@ import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 export class ResumeController {
   constructor(private readonly resumeService: ResumeService) {}
 
-  private readonly userId = '1';
-
   @Post()
-  create(@Body() dto: CreateResumeDto) {
-    return this.resumeService.create(this.userId, dto);
+  create(@CurrentUser() user: JwtAccessPayload, @Body() dto: CreateResumeDto) {
+    return this.resumeService.create(user.sub, dto);
   }
 
   @Post('/by-job-description')
-  createByJobDescription(@Body('jobDescription') jobDescription: string) {
-    return this.resumeService.createByJobDescription(
-      this.userId,
-      jobDescription,
-    );
+  createByJobDescription(
+    @CurrentUser() user: JwtAccessPayload,
+    @Body('jobDescription') jobDescription: string,
+  ) {
+    return this.resumeService.createByJobDescription(user.sub, jobDescription);
   }
 
   @Get()
-  findMe() {
-    return this.resumeService.findAll(this.userId);
+  findMe(@CurrentUser() user: JwtAccessPayload) {
+    return this.resumeService.findAll(user.sub);
   }
 
   @Get('/:resumeId')
-  findOne(@Param('resumeId') resumeId: string) {
-    return this.resumeService.findOne(this.userId, resumeId);
+  findOne(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('resumeId') resumeId: string,
+  ) {
+    return this.resumeService.findOne(user.sub, resumeId);
   }
 
   @Patch('/:resumeId')
-  update(@Param('resumeId') resumeId: string, @Body() dto: UpdateResumeDto) {
-    return this.resumeService.update(this.userId, resumeId, dto);
+  update(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('resumeId') resumeId: string,
+    @Body() dto: UpdateResumeDto,
+  ) {
+    return this.resumeService.update(user.sub, resumeId, dto);
   }
 
   @Delete('/:resumeId')
-  remove(@Param('resumeId') resumeId: string) {
-    return this.resumeService.remove(this.userId, resumeId);
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('resumeId') resumeId: string,
+  ) {
+    return this.resumeService.remove(user.sub, resumeId);
   }
 }

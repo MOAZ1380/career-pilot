@@ -11,31 +11,37 @@ import { CreateExperienceDto } from './dto/create-experience.dto';
 import { UpdateExperienceDto } from './dto/update-experience.dto';
 import { ExperienceService } from './experience.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import type { JwtAccessPayload } from 'src/auth/interfaces/jwt-payload.interface';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 
 @Controller('experience')
 @UseGuards(JwtAuthGuard)
 export class ExperienceController {
   constructor(private readonly experienceService: ExperienceService) {}
 
-  private readonly userId = '1';
-
   @Post()
-  create(@Body() dto: CreateExperienceDto) {
-    return this.experienceService.create(this.userId, dto);
+  create(
+    @CurrentUser() user: JwtAccessPayload,
+    @Body() dto: CreateExperienceDto,
+  ) {
+    return this.experienceService.create(user.sub, dto);
   }
 
   @Get()
-  findMe() {
-    return this.experienceService.findMe(this.userId);
+  findMe(@CurrentUser() user: JwtAccessPayload) {
+    return this.experienceService.findMe(user.sub);
   }
 
   @Patch()
-  update(@Body() dto: UpdateExperienceDto) {
-    return this.experienceService.update(this.userId, dto);
+  update(
+    @CurrentUser() user: JwtAccessPayload,
+    @Body() dto: UpdateExperienceDto,
+  ) {
+    return this.experienceService.update(user.sub, dto);
   }
 
   @Delete()
-  remove() {
-    return this.experienceService.remove(this.userId);
+  remove(@CurrentUser() user: JwtAccessPayload) {
+    return this.experienceService.remove(user.sub);
   }
 }

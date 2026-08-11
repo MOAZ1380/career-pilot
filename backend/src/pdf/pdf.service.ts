@@ -17,8 +17,8 @@ export class PdfService {
 
   async generatePdf(resumeId: string): Promise<Buffer> {
     // Logic to generate PDF from resume data
-    const resume = await this.resumeService.findOne(this.userId, resumeId);
-    const profile = await this.profileService.findMe(this.userId);
+    const resume = await this.resumeService.findOne(user.sub, resumeId);
+    const profile = await this.profileService.findMe(user.sub);
 
     const cvData = mapResumeToCvData(resume, profile);
     const pdfBuffer = await PdfGenerator.generatePdf(cvData);

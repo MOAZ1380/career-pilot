@@ -31,7 +31,7 @@ export class EmailService {
     const smtpHost = this.configService.get('SMTP_HOST');
     const smtpPort = this.configService.get('SMTP_PORT');
     const smtpUser = this.configService.get('SMTP_USER');
-    const smtpPassword = this.configService.get('SMTP_PASSWORD');
+    const smtpPassword = this.configService.get('SMTP_PASS');
     const smtpSecure = this.configService.get('SMTP_SECURE') === 'true';
 
     // Only initialize if SMTP config is available

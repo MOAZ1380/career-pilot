@@ -9,6 +9,6 @@ export class AiController {
   userId = '1';
   @Post('/optimize-resume')
   async optimizeResume(@Body() dto: OptimizeResumeDto) {
-    return this.aiService.optimizeResume(dto.jobDescription, this.userId);
+    return this.aiService.optimizeResume(dto.jobDescription, user.sub);
   }
 }

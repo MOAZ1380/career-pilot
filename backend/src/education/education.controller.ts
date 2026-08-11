@@ -21,21 +21,21 @@ export class EducationController {
 
   @Post()
   create(@Body() dto: CreateEducationDto) {
-    return this.educationService.create(this.userId, dto);
+    return this.educationService.create(user.sub, dto);
   }
 
   @Get()
   findMe() {
-    return this.educationService.findMe(this.userId);
+    return this.educationService.findMe(user.sub);
   }
 
   @Patch()
   update(@Body() dto: UpdateEducationDto) {
-    return this.educationService.update(this.userId, dto);
+    return this.educationService.update(user.sub, dto);
   }
 
   @Delete()
   remove() {
-    return this.educationService.remove(this.userId);
+    return this.educationService.remove(user.sub);
   }
 }

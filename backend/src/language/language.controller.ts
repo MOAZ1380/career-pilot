@@ -11,31 +11,37 @@ import { CreateLanguageDto } from './dto/create-language.dto';
 import { UpdateLanguageDto } from './dto/update-language.dto';
 import { LanguageService } from './language.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import type { JwtAccessPayload } from 'src/auth/interfaces/jwt-payload.interface';
 
 @Controller('language')
 @UseGuards(JwtAuthGuard)
 export class LanguageController {
   constructor(private readonly languageService: LanguageService) {}
 
-  private readonly userId = '1';
-
   @Post()
-  create(@Body() dto: CreateLanguageDto) {
-    return this.languageService.create(this.userId, dto);
+  create(
+    @CurrentUser() user: JwtAccessPayload,
+    @Body() dto: CreateLanguageDto,
+  ) {
+    return this.languageService.create(user.sub, dto);
   }
 
   @Get()
-  findMe() {
-    return this.languageService.findMe(this.userId);
+  findMe(@CurrentUser() user: JwtAccessPayload) {
+    return this.languageService.findMe(user.sub);
   }
 
   @Patch()
-  update(@Body() dto: UpdateLanguageDto) {
-    return this.languageService.update(this.userId, dto);
+  update(
+    @CurrentUser() user: JwtAccessPayload,
+    @Body() dto: UpdateLanguageDto,
+  ) {
+    return this.languageService.update(user.sub, dto);
   }
 
   @Delete()
-  remove() {
-    return this.languageService.remove(this.userId);
+  remove(@CurrentUser() user: JwtAccessPayload) {
+    return this.languageService.remove(user.sub);
   }
 }
