@@ -7,9 +7,9 @@ import {
   Get,
   UseGuards,
   Res,
+  Req,
 } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
-import type { Response } from 'express';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { CurrentUser } from './decorators/current-user.decorator';
@@ -23,6 +23,7 @@ import { VerifyResetOtpDto } from './dto/verify-reset-otp.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { CurrentUserDto } from './dto/current-user.dto';
+import { request, type Request, type Response } from 'express';
 
 /**
  * AuthController handles all authentication endpoints
@@ -107,7 +108,6 @@ export class AuthController {
     message: string;
     data: {
       accessToken: string;
-      refreshToken: string;
       user: CurrentUserDto;
     };
   }> {
@@ -116,14 +116,21 @@ export class AuthController {
     // Optional: Set refresh token in HttpOnly cookie
     // This is more secure for web apps, but this implementation returns in body
     // If cookie preference is chosen, configure CORS and uncomment:
-    // res.cookie('refreshToken', result.data.refreshToken, {
-    //   httpOnly: true,
-    //   secure: process.env.NODE_ENV === 'production',
-    //   sameSite: 'strict',
-    //   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    // });
+    res.cookie('refreshToken', result.data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
-    return result;
+    return {
+      success: true,
+      message: result.message,
+      data: {
+        accessToken: result.data.accessToken,
+        user: result.data.user,
+      },
+    };
   }
 
   /**
@@ -136,15 +143,36 @@ export class AuthController {
   @Post('refresh')
   @Throttle({ default: { limit: 30, ttl: 3600000 } })
   @HttpCode(HttpStatus.OK)
-  async refresh(@Body() dto: RefreshTokenDto): Promise<{
+  async refresh(
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{
     success: boolean;
     message: string;
     data: {
       accessToken: string;
-      refreshToken: string;
     };
   }> {
-    return this.authService.refreshToken(dto);
+    const refreshToken = req.cookies.refreshToken;
+
+    const result = await this.authService.refreshToken({
+      refreshToken,
+    });
+
+    res.cookie('refreshToken', result.data.refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
+
+    return {
+      success: true,
+      message: result.message,
+      data: {
+        accessToken: result.data.accessToken,
+      },
+    };
   }
 
   /**
@@ -159,13 +187,24 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   async logout(
     @CurrentUser() user: JwtAccessPayload,
-    @Body() dto: { refreshToken: string },
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
   ): Promise<{
     success: boolean;
     message: string;
     data: null;
   }> {
-    return this.authService.logout(user.sub, dto.refreshToken);
+    const refreshToken = req.cookies.refreshToken;
+
+    const result = await this.authService.logout(user.sub, refreshToken);
+
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    return result;
   }
 
   /**
@@ -178,12 +217,23 @@ export class AuthController {
   @Post('logout-all')
   @UseGuards(JwtAuthGuard)
   @HttpCode(HttpStatus.OK)
-  async logoutAll(@CurrentUser() user: JwtAccessPayload): Promise<{
+  async logoutAll(
+    @CurrentUser() user: JwtAccessPayload,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<{
     success: boolean;
     message: string;
     data: null;
   }> {
-    return this.authService.logoutAll(user.sub);
+    const result = await this.authService.logoutAll(user.sub);
+
+    res.clearCookie('refreshToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+
+    return result;
   }
 
   /**
