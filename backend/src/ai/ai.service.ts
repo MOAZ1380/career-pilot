@@ -15,8 +15,8 @@ export class AiService {
     apiKey: process.env.GEMINI_API_KEY!,
   });
 
-  async optimizeResume(jobDescription: string, profile: unknown) {
-    const myProfile = await this.profileServices.findMe('1');
+  async optimizeResume(userId: string, jobDescription: string) {
+    const myProfile = await this.profileServices.findMe(userId);
     if (!myProfile) {
       throw new Error('Profile not found');
     }

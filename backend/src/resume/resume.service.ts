@@ -29,6 +29,7 @@ export class ResumeService {
       select: { id: true, bio: true },
     });
 
+    console.log('Profile:', profile, 'dto:', dto, userId);
     if (!profile) {
       throw new NotFoundException('Profile not found');
     }

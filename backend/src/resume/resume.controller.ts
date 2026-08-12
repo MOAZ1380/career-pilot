@@ -12,6 +12,8 @@ import { CreateResumeDto } from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { ResumeService } from './resume.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
+import type { JwtAccessPayload } from 'src/auth/interfaces/jwt-payload.interface';
 
 @Controller('resume')
 @UseGuards(JwtAuthGuard)

@@ -8,17 +8,14 @@ import { mapResumeToCvData } from './resume-mapper';
 @Injectable()
 export class PdfService {
   constructor(
-    private readonly prisma: PrismaService,
     private readonly resumeService: ResumeService,
     private readonly profileService: ProfileService,
   ) {}
 
-  userId = '1';
-
-  async generatePdf(resumeId: string): Promise<Buffer> {
+  async generatePdf(userId: string, resumeId: string): Promise<Buffer> {
     // Logic to generate PDF from resume data
-    const resume = await this.resumeService.findOne(user.sub, resumeId);
-    const profile = await this.profileService.findMe(user.sub);
+    const resume = await this.resumeService.findOne(userId, resumeId);
+    const profile = await this.profileService.findMe(userId);
 
     const cvData = mapResumeToCvData(resume, profile);
     const pdfBuffer = await PdfGenerator.generatePdf(cvData);
