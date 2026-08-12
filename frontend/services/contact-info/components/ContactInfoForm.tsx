@@ -9,8 +9,9 @@ import {
   deleteContactInfo,
 } from "../api/contact-info.api";
 
-const initialState: CreateContactInfoDto = {
+const initialState = {
   phone: "",
+  email: "",
   linkedIn: "",
   github: "",
   portfolio: "",
@@ -19,7 +20,7 @@ const initialState: CreateContactInfoDto = {
 };
 
 export default function ContactInfoForm() {
-  const [form, setForm] = useState<CreateContactInfoDto>(initialState);
+  const [form, setForm] = useState(initialState);
   const [contact, setContact] = useState<ContactInfo | null>(null);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -31,6 +32,15 @@ export default function ContactInfoForm() {
 
   const handleCreate = async () => {
     try {
+      setForm((prev) => ({
+        ...prev,
+        email: form.email ?? "",
+        links: [
+          form.linkedIn ?? "",
+          form.github ?? "",
+          form.portfolio ?? "",
+        ].filter(Boolean),
+      }));
       const data = await createContactInfo(form);
       setContact(data);
       alert("Created Successfully");
@@ -45,9 +55,10 @@ export default function ContactInfoForm() {
       setContact(data);
       setForm({
         phone: data.phone ?? "",
-        linkedIn: data.linkedIn ?? "",
-        github: data.github ?? "",
-        portfolio: data.portfolio ?? "",
+        email: data.email ?? "",
+        linkedIn: data.links?.[0] ?? "",
+        github: data.links?.[1] ?? "",
+        portfolio: data.links?.[2] ?? "",
         country: data.country ?? "",
         city: data.city ?? "",
       });
@@ -89,6 +100,13 @@ export default function ContactInfoForm() {
         onChange={handleChange}
       />
 
+      <input
+        className="rounded border p-2"
+        name="email"
+        placeholder="Email"
+        value={form.email ?? ""}
+        onChange={handleChange}
+      />
       <input
         className="rounded border p-2"
         name="linkedIn"

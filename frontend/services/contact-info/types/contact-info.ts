@@ -1,9 +1,8 @@
 export interface ContactInfo {
   id: string;
   phone?: string | null;
-  linkedIn?: string | null;
-  github?: string | null;
-  portfolio?: string | null;
+  email?: string | null;
+  links?: string[] | null;
   country?: string | null;
   city?: string | null;
 
@@ -12,9 +11,8 @@ export interface ContactInfo {
 
 export interface CreateContactInfoDto {
   phone?: string;
-  linkedIn?: string;
-  github?: string;
-  portfolio?: string;
+  email?: string;
+  links?: string[];
   country?: string;
   city?: string;
 }

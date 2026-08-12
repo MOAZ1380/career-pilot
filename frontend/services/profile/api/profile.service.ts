@@ -11,22 +11,42 @@ const BASE_URL = "/profile";
 export const createProfile = async (
   data: CreateProfileDto,
 ): Promise<ProfileResponse> => {
-  const response = await axios.post(BASE_URL, data);
-  return response.data;
+  try {
+    const response = await axios.post(BASE_URL, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating profile:", error);
+    throw error;
+  }
 };
 
 export const getProfile = async (): Promise<ProfileResponse> => {
-  const response = await axios.get(BASE_URL);
-  return response.data;
+  try {
+    const response = await axios.get(BASE_URL);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching profile:", error);
+    throw error;
+  }
 };
 
 export const updateProfile = async (
   data: UpdateProfileDto,
 ): Promise<ProfileResponse> => {
-  const response = await axios.patch(BASE_URL, data);
-  return response.data;
+  try {
+    const response = await axios.patch(BASE_URL, data);
+    return response.data;
+  } catch (error) {
+    console.error("Error updating profile:", error);
+    throw error;
+  }
 };
 
 export const deleteProfile = async (): Promise<void> => {
-  await axios.delete(BASE_URL);
+  try {
+    await axios.delete(BASE_URL);
+  } catch (error) {
+    console.error("Error deleting profile:", error);
+    throw error;
+  }
 };

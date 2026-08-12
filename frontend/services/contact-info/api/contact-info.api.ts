@@ -11,6 +11,7 @@ export const createContactInfo = async (
   data: CreateContactInfoDto,
 ): Promise<ContactInfo> => {
   try {
+    console.log("Creating contact info with data:", data); // Debugging line
     const response = await axios.post(BASE_URL, data);
     return response.data;
   } catch (error) {
