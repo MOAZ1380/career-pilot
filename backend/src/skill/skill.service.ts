@@ -8,6 +8,12 @@ import { UpdateSkillDto } from './dto/update-skill.dto';
 export class SkillService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async create(userId: string, dto: CreateSkillDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -27,7 +33,12 @@ export class SkillService {
     });
   }
 
-  async findMe(userId: string) {
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -42,7 +53,7 @@ export class SkillService {
     });
   }
 
-  async update(userId: string, dto: UpdateSkillDto) {
+  async findOne(userId: string, skillId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -53,7 +64,34 @@ export class SkillService {
     }
 
     const skill = await this.prisma.skill.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: skillId },
+    });
+
+    if (!skill) {
+      throw new NotFoundException('Skill not found');
+    }
+
+    return skill;
+  }
+
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
+  async update(userId: string, skillId: string, dto: UpdateSkillDto) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    const skill = await this.prisma.skill.findFirst({
+      where: { profileId: profile.id, id: skillId },
       select: { id: true },
     });
 
@@ -67,7 +105,12 @@ export class SkillService {
     });
   }
 
-  async remove(userId: string) {
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  async remove(userId: string, skillId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -78,7 +121,7 @@ export class SkillService {
     }
 
     const skill = await this.prisma.skill.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: skillId },
       select: { id: true },
     });
 

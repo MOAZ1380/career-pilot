@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -28,20 +29,32 @@ export class EducationController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.educationService.findMe(user.sub);
+  findAll(@CurrentUser() user: JwtAccessPayload) {
+    return this.educationService.findAll(user.sub);
   }
 
-  @Patch()
+  @Get(':id')
+  findOne(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') educationId: string,
+  ) {
+    return this.educationService.findOne(user.sub, educationId);
+  }
+
+  @Patch(':id')
   update(
     @CurrentUser() user: JwtAccessPayload,
+    @Param('id') educationId: string,
     @Body() dto: UpdateEducationDto,
   ) {
-    return this.educationService.update(user.sub, dto);
+    return this.educationService.update(user.sub, educationId, dto);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.educationService.remove(user.sub);
+  @Delete(':id')
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') educationId: string,
+  ) {
+    return this.educationService.remove(user.sub, educationId);
   }
 }

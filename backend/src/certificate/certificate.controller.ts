@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -28,20 +29,32 @@ export class CertificateController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.certificateService.findMe(user.sub);
+  findAll(@CurrentUser() user: JwtAccessPayload) {
+    return this.certificateService.findAll(user.sub);
   }
 
-  @Patch()
+  @Get(':id')
+  findOne(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') certificateId: string,
+  ) {
+    return this.certificateService.findOne(user.sub, certificateId);
+  }
+
+  @Patch(':id')
   update(
     @CurrentUser() user: JwtAccessPayload,
+    @Param('id') certificateId: string,
     @Body() dto: UpdateCertificateDto,
   ) {
-    return this.certificateService.update(user.sub, dto);
+    return this.certificateService.update(user.sub, certificateId, dto);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.certificateService.remove(user.sub);
+  @Delete(':id')
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') certificateId: string,
+  ) {
+    return this.certificateService.remove(user.sub, certificateId);
   }
 }

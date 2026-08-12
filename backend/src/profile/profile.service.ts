@@ -7,8 +7,21 @@ import { UpdateProfileDto } from './dto/update-profile.dto';
 export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async create(userId: string, dto: CreateProfileDto) {
-    // if profile exist
+    const existingProfile = await this.prisma.profile.findUnique({
+      where: { userId },
+    });
+
+    if (existingProfile) {
+      throw new NotFoundException('Profile already exists');
+    }
+
     return this.prisma.profile.create({
       data: {
         ...dto,
@@ -17,6 +30,11 @@ export class ProfileService {
     });
   }
 
+  /**
+   *
+   * @param userId
+   * @returns
+   */
   async findMe(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -38,16 +56,43 @@ export class ProfileService {
     return profile;
   }
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async update(userId: string, dto: UpdateProfileDto) {
-    // if profile exist
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
     return this.prisma.profile.update({
       where: { userId },
-      data: dto,
+      data: {
+        ...dto,
+      },
     });
   }
 
+  /**
+   *
+   * @param userId
+   * @returns
+   */
   async remove(userId: string) {
-    // if profile exist
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
     return this.prisma.profile.delete({
       where: { userId },
     });

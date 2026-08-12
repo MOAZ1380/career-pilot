@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -34,16 +35,20 @@ export class ContactInfoController {
     return this.contactInfoService.findMe(user.sub);
   }
 
-  @Patch()
+  @Patch(':id')
   update(
     @CurrentUser() user: JwtAccessPayload,
+    @Param('id') contactInfoId: string,
     @Body() dto: UpdateContactInfoDto,
   ) {
-    return this.contactInfoService.update(user.sub, dto);
+    return this.contactInfoService.update(user.sub, contactInfoId, dto);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.contactInfoService.remove(user.sub);
+  @Delete(':id')
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') contactInfoId: string,
+  ) {
+    return this.contactInfoService.remove(user.sub, contactInfoId);
   }
 }

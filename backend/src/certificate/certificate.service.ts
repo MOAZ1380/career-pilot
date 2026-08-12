@@ -25,7 +25,7 @@ export class CertificateService {
     });
   }
 
-  async findMe(userId: string) {
+  async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -40,7 +40,7 @@ export class CertificateService {
     });
   }
 
-  async update(userId: string, dto: UpdateCertificateDto) {
+  async findOne(userId: string, certificateId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -51,7 +51,32 @@ export class CertificateService {
     }
 
     const certificate = await this.prisma.certificate.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: certificateId },
+    });
+
+    if (!certificate) {
+      throw new NotFoundException('Certificate not found');
+    }
+
+    return certificate;
+  }
+
+  async update(
+    userId: string,
+    certificateId: string,
+    dto: UpdateCertificateDto,
+  ) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    const certificate = await this.prisma.certificate.findFirst({
+      where: { profileId: profile.id, id: certificateId },
       select: { id: true },
     });
 
@@ -65,7 +90,7 @@ export class CertificateService {
     });
   }
 
-  async remove(userId: string) {
+  async remove(userId: string, certificateId) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -76,7 +101,7 @@ export class CertificateService {
     }
 
     const certificate = await this.prisma.certificate.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: certificateId },
       select: { id: true },
     });
 

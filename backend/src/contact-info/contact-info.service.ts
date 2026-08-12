@@ -39,10 +39,15 @@ export class ContactInfoService {
     return contactInfo;
   }
 
-  async update(userId: string, dto: UpdateContactInfoDto) {
+  async update(
+    userId: string,
+    contactInfoId: string,
+    dto: UpdateContactInfoDto,
+  ) {
     const contactInfo = await this.prisma.contactInfo.findFirst({
       where: {
         profile: { userId },
+        id: contactInfoId,
       },
       select: { id: true },
     });
@@ -57,10 +62,11 @@ export class ContactInfoService {
     });
   }
 
-  async remove(userId: string) {
+  async remove(userId: string, contactInfoId: string) {
     const contactInfo = await this.prisma.contactInfo.findFirst({
       where: {
         profile: { userId },
+        id: contactInfoId,
       },
       select: { id: true },
     });

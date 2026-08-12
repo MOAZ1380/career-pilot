@@ -7,6 +7,12 @@ import { UpdateProjectDto } from './dto/update-project.dto';
 export class ProjectService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async create(userId: string, dto: CreateProjectDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -25,7 +31,12 @@ export class ProjectService {
     });
   }
 
-  async findMe(userId: string) {
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -40,7 +51,13 @@ export class ProjectService {
     });
   }
 
-  async update(userId: string, dto: UpdateProjectDto) {
+  /**
+   *
+   * @param userId
+   * @param projectId
+   * @returns
+   */
+  async findOne(userId: string, projectId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -51,7 +68,34 @@ export class ProjectService {
     }
 
     const project = await this.prisma.project.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: projectId },
+    });
+
+    if (!project) {
+      throw new NotFoundException('Project not found');
+    }
+
+    return project;
+  }
+
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
+  async update(userId: string, projectId: string, dto: UpdateProjectDto) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    const project = await this.prisma.project.findFirst({
+      where: { profileId: profile.id, id: projectId },
       select: { id: true },
     });
 
@@ -65,7 +109,12 @@ export class ProjectService {
     });
   }
 
-  async remove(userId: string) {
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  async remove(userId: string, projectId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -76,7 +125,7 @@ export class ProjectService {
     }
 
     const project = await this.prisma.project.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: projectId },
       select: { id: true },
     });
 

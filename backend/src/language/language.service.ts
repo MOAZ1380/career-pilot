@@ -8,6 +8,12 @@ import { UpdateLanguageDto } from './dto/update-language.dto';
 export class LanguageService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async create(userId: string, dto: CreateLanguageDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -27,7 +33,12 @@ export class LanguageService {
     });
   }
 
-  async findMe(userId: string) {
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -42,7 +53,13 @@ export class LanguageService {
     });
   }
 
-  async update(userId: string, dto: UpdateLanguageDto) {
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
+  async update(userId: string, languageId: string, dto: UpdateLanguageDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -53,7 +70,7 @@ export class LanguageService {
     }
 
     const language = await this.prisma.language.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: languageId },
       select: { id: true },
     });
 
@@ -67,7 +84,13 @@ export class LanguageService {
     });
   }
 
-  async remove(userId: string) {
+  /**
+   *
+   * @param userId
+   * @param languageId
+   * @returns
+   */
+  async findOne(userId: string, languageId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -78,7 +101,34 @@ export class LanguageService {
     }
 
     const language = await this.prisma.language.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: languageId },
+    });
+
+    if (!language) {
+      throw new NotFoundException('Language not found');
+    }
+
+    return language;
+  }
+
+  /**
+   *
+   * @param userId
+   * @param languageId
+   * @returns
+   */
+  async remove(userId: string, languageId: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    const language = await this.prisma.language.findFirst({
+      where: { profileId: profile.id, id: languageId },
       select: { id: true },
     });
 

@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -28,20 +29,32 @@ export class ExperienceController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.experienceService.findMe(user.sub);
+  findAll(@CurrentUser() user: JwtAccessPayload) {
+    return this.experienceService.findAll(user.sub);
   }
 
-  @Patch()
+  @Get(':id')
+  findOne(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') experienceId: string,
+  ) {
+    return this.experienceService.findOne(user.sub, experienceId);
+  }
+
+  @Patch(':id')
   update(
     @CurrentUser() user: JwtAccessPayload,
+    @Param('id') experienceId: string,
     @Body() dto: UpdateExperienceDto,
   ) {
-    return this.experienceService.update(user.sub, dto);
+    return this.experienceService.update(user.sub, experienceId, dto);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.experienceService.remove(user.sub);
+  @Delete(':id')
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') experienceId: string,
+  ) {
+    return this.experienceService.remove(user.sub, experienceId);
   }
 }

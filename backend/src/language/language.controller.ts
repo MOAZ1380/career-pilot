@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -28,20 +29,32 @@ export class LanguageController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.languageService.findMe(user.sub);
+  findAll(@CurrentUser() user: JwtAccessPayload) {
+    return this.languageService.findAll(user.sub);
   }
 
-  @Patch()
+  @Get(':id')
+  findOne(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') languageId: string,
+  ) {
+    return this.languageService.findOne(user.sub, languageId);
+  }
+
+  @Patch(':id')
   update(
     @CurrentUser() user: JwtAccessPayload,
+    @Param('id') languageId: string,
     @Body() dto: UpdateLanguageDto,
   ) {
-    return this.languageService.update(user.sub, dto);
+    return this.languageService.update(user.sub, languageId, dto);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.languageService.remove(user.sub);
+  @Delete(':id')
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') languageId: string,
+  ) {
+    return this.languageService.remove(user.sub, languageId);
   }
 }

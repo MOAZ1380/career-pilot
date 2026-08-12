@@ -34,7 +34,7 @@ export class ResumeController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
+  findAll(@CurrentUser() user: JwtAccessPayload) {
     return this.resumeService.findAll(user.sub);
   }
 

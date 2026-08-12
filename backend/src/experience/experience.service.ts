@@ -8,6 +8,12 @@ import { UpdateExperienceDto } from './dto/update-experience.dto';
 export class ExperienceService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async create(userId: string, dto: CreateExperienceDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -27,7 +33,12 @@ export class ExperienceService {
     });
   }
 
-  async findMe(userId: string) {
+  /**
+   *
+   * @param userId
+   * @returns
+   */
+  async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -42,7 +53,35 @@ export class ExperienceService {
     });
   }
 
-  async update(userId: string, dto: UpdateExperienceDto) {
+  /**
+   *
+   * @param userId
+   * @param experienceId
+   * @returns
+   */
+  async findOne(userId: string, experienceId: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    return this.prisma.experience.findFirst({
+      where: { profileId: profile.id, id: experienceId },
+    });
+  }
+
+  /**
+   *
+   * @param userId
+   * @param experienceId
+   * @param dto
+   * @returns
+   */
+  async update(userId: string, experienceId: string, dto: UpdateExperienceDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -53,7 +92,7 @@ export class ExperienceService {
     }
 
     const experience = await this.prisma.experience.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: experienceId },
       select: { id: true },
     });
 
@@ -67,7 +106,13 @@ export class ExperienceService {
     });
   }
 
-  async remove(userId: string) {
+  /**
+   *
+   * @param userId
+   * @param experienceId
+   * @returns
+   */
+  async remove(userId: string, experienceId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -78,7 +123,7 @@ export class ExperienceService {
     }
 
     const experience = await this.prisma.experience.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: experienceId },
       select: { id: true },
     });
 

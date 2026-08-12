@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -25,17 +26,32 @@ export class ProjectController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.projectService.findMe(user.sub);
+  findAll(@CurrentUser() user: JwtAccessPayload) {
+    return this.projectService.findAll(user.sub);
   }
 
-  @Patch()
-  update(@CurrentUser() user: JwtAccessPayload, @Body() dto: UpdateProjectDto) {
-    return this.projectService.update(user.sub, dto);
+  @Get(':id')
+  findOne(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') projectId: string,
+  ) {
+    return this.projectService.findOne(user.sub, projectId);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.projectService.remove(user.sub);
+  @Patch(':id')
+  update(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') projectId: string,
+    @Body() dto: UpdateProjectDto,
+  ) {
+    return this.projectService.update(user.sub, projectId, dto);
+  }
+
+  @Delete(':id')
+  remove(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') projectId: string,
+  ) {
+    return this.projectService.remove(user.sub, projectId);
   }
 }

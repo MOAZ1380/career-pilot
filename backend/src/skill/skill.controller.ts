@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  Param,
   Patch,
   Post,
   UseGuards,
@@ -25,17 +26,26 @@ export class SkillController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.skillService.findMe(user.sub);
+  findAll(@CurrentUser() user: JwtAccessPayload) {
+    return this.skillService.findAll(user.sub);
   }
 
-  @Patch()
-  update(@CurrentUser() user: JwtAccessPayload, @Body() dto: UpdateSkillDto) {
-    return this.skillService.update(user.sub, dto);
+  @Get(':id')
+  findOne(@CurrentUser() user: JwtAccessPayload, @Param('id') skillId: string) {
+    return this.skillService.findOne(user.sub, skillId);
   }
 
-  @Delete()
-  remove(@CurrentUser() user: JwtAccessPayload) {
-    return this.skillService.remove(user.sub);
+  @Patch(':id')
+  update(
+    @CurrentUser() user: JwtAccessPayload,
+    @Param('id') skillId: string,
+    @Body() dto: UpdateSkillDto,
+  ) {
+    return this.skillService.update(user.sub, skillId, dto);
+  }
+
+  @Delete(':id')
+  remove(@CurrentUser() user: JwtAccessPayload, @Param('id') skillId: string) {
+    return this.skillService.remove(user.sub, skillId);
   }
 }

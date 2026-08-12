@@ -25,7 +25,7 @@ export class EducationService {
     });
   }
 
-  async findMe(userId: string) {
+  async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -40,7 +40,22 @@ export class EducationService {
     });
   }
 
-  async update(userId: string, dto: UpdateEducationDto) {
+  async findOne(userId: string, educationId: string) {
+    const profile = await this.prisma.profile.findUnique({
+      where: { userId },
+      select: { id: true },
+    });
+
+    if (!profile) {
+      throw new NotFoundException('Profile not found');
+    }
+
+    return this.prisma.education.findFirst({
+      where: { profileId: profile.id, id: educationId },
+    });
+  }
+
+  async update(userId: string, educationId: string, dto: UpdateEducationDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -51,7 +66,7 @@ export class EducationService {
     }
 
     const education = await this.prisma.education.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: educationId },
       select: { id: true },
     });
 
@@ -65,7 +80,7 @@ export class EducationService {
     });
   }
 
-  async remove(userId: string) {
+  async remove(userId: string, educationId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
@@ -76,7 +91,7 @@ export class EducationService {
     }
 
     const education = await this.prisma.education.findFirst({
-      where: { profileId: profile.id },
+      where: { profileId: profile.id, id: educationId },
       select: { id: true },
     });
 
