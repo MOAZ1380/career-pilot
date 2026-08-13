@@ -8,10 +8,13 @@ export class CertificateService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Creates a certificate for the authenticated user's profile.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param dto - Certificate data to be created.
+   * @returns The newly created certificate.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async create(userId: string, dto: CreateCertificateDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -32,9 +35,15 @@ export class CertificateService {
   }
 
   /**
+   * Retrieves all certificates belonging to the authenticated user.
    *
-   * @param userId
-   * @returns
+   * Certificates are ordered by issue date, with the most recent
+   * certificate returned first.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @returns A list of the user's certificates.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -48,14 +57,20 @@ export class CertificateService {
 
     return this.prisma.certificate.findMany({
       where: { profileId: profile.id },
+      orderBy: { issueDate: 'desc' },
     });
   }
 
   /**
+   * Retrieves a specific certificate belonging to the authenticated user.
    *
-   * @param userId
-   * @param certificateId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param certificateId - The ID of the certificate to retrieve.
+   * @returns The requested certificate.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the certificate does not exist
+   * or does not belong to the authenticated user.
    */
   async findOne(userId: string, certificateId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -79,11 +94,16 @@ export class CertificateService {
   }
 
   /**
+   * Updates a certificate belonging to the authenticated user.
    *
-   * @param userId
-   * @param certificateId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param certificateId - The ID of the certificate to update.
+   * @param dto - Updated certificate data.
+   * @returns The updated certificate.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the certificate does not exist
+   * or does not belong to the authenticated user.
    */
   async update(
     userId: string,
@@ -115,12 +135,17 @@ export class CertificateService {
   }
 
   /**
+   * Deletes a certificate belonging to the authenticated user.
    *
-   * @param userId
-   * @param certificateId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param certificateId - The ID of the certificate to delete.
+   * @returns The deleted certificate.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the certificate does not exist
+   * or does not belong to the authenticated user.
    */
-  async remove(userId: string, certificateId) {
+  async remove(userId: string, certificateId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       select: { id: true },
