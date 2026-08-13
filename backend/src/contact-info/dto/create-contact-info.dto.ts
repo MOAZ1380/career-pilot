@@ -1,4 +1,23 @@
-import { IsOptional, IsString, IsUrl, MaxLength } from 'class-validator';
+import {
+  IsEmail,
+  IsEnum,
+  IsOptional,
+  IsString,
+  IsUrl,
+  MaxLength,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
+import { LinkType } from '@prisma/client';
+
+export class CreateProfileLinkDto {
+  @IsEnum(LinkType)
+  type: LinkType;
+
+  @IsUrl()
+  @MaxLength(500)
+  url: string;
+}
 
 export class CreateContactInfoDto {
   @IsOptional()
@@ -7,12 +26,14 @@ export class CreateContactInfoDto {
   phone?: string;
 
   @IsOptional()
-  @IsString()
+  @IsEmail()
   @MaxLength(100)
   email?: string;
 
   @IsOptional()
-  links: string[];
+  @ValidateNested({ each: true })
+  @Type(() => CreateProfileLinkDto)
+  links?: CreateProfileLinkDto[];
 
   @IsOptional()
   @IsString()
