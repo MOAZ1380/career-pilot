@@ -9,10 +9,13 @@ export class LanguageService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Creates a language record for the authenticated user's profile.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param dto - Language data to be created.
+   * @returns The newly created language record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async create(userId: string, dto: CreateLanguageDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -27,16 +30,18 @@ export class LanguageService {
     return this.prisma.language.create({
       data: {
         ...dto,
-        level: dto.level as LanguageLevel,
         profileId: profile.id,
       },
     });
   }
 
   /**
+   * Retrieves all language records belonging to the authenticated user.
    *
-   * @param userId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @returns A list of the user's languages.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -54,10 +59,16 @@ export class LanguageService {
   }
 
   /**
+   * Updates a language record belonging to the authenticated user.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param languageId - The ID of the language record to update.
+   * @param dto - Updated language data.
+   * @returns The updated language record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the language does not exist
+   * or does not belong to the authenticated user.
    */
   async update(userId: string, languageId: string, dto: UpdateLanguageDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -85,10 +96,15 @@ export class LanguageService {
   }
 
   /**
+   * Retrieves a specific language belonging to the authenticated user.
    *
-   * @param userId
-   * @param languageId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param languageId - The ID of the language record to retrieve.
+   * @returns The requested language record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the language does not exist
+   * or does not belong to the authenticated user.
    */
   async findOne(userId: string, languageId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -112,10 +128,15 @@ export class LanguageService {
   }
 
   /**
+   * Deletes a language record belonging to the authenticated user.
    *
-   * @param userId
-   * @param languageId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param languageId - The ID of the language record to delete.
+   * @returns The deleted language record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the language does not exist
+   * or does not belong to the authenticated user.
    */
   async remove(userId: string, languageId: string) {
     const profile = await this.prisma.profile.findUnique({
