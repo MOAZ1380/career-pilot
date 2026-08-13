@@ -17,6 +17,8 @@ export class ContactInfoService {
       throw new NotFoundException('Profile not found');
     }
 
+    // if this user have contactInfo dont create
+
     return this.prisma.contactInfo.create({
       data: {
         ...dto,
@@ -25,7 +27,7 @@ export class ContactInfoService {
     });
   }
 
-  async findMe(userId: string) {
+  async findMyContactInfo(userId: string) {
     const contactInfo = await this.prisma.contactInfo.findFirst({
       where: {
         profile: { userId },
@@ -39,15 +41,10 @@ export class ContactInfoService {
     return contactInfo;
   }
 
-  async update(
-    userId: string,
-    contactInfoId: string,
-    dto: UpdateContactInfoDto,
-  ) {
+  async update(userId: string, dto: UpdateContactInfoDto) {
     const contactInfo = await this.prisma.contactInfo.findFirst({
       where: {
         profile: { userId },
-        id: contactInfoId,
       },
       select: { id: true },
     });
@@ -62,11 +59,10 @@ export class ContactInfoService {
     });
   }
 
-  async remove(userId: string, contactInfoId: string) {
+  async remove(userId: string) {
     const contactInfo = await this.prisma.contactInfo.findFirst({
       where: {
         profile: { userId },
-        id: contactInfoId,
       },
       select: { id: true },
     });

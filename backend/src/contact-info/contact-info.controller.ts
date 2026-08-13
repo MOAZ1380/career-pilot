@@ -20,8 +20,6 @@ import type { JwtAccessPayload } from 'src/auth/interfaces/jwt-payload.interface
 export class ContactInfoController {
   constructor(private readonly contactInfoService: ContactInfoService) {}
 
-  // Temporary until JWT is added
-
   @Post()
   create(
     @CurrentUser() user: JwtAccessPayload,
@@ -31,24 +29,20 @@ export class ContactInfoController {
   }
 
   @Get()
-  findMe(@CurrentUser() user: JwtAccessPayload) {
-    return this.contactInfoService.findMe(user.sub);
+  findMyContactInfo(@CurrentUser() user: JwtAccessPayload) {
+    return this.contactInfoService.findMyContactInfo(user.sub);
   }
 
-  @Patch(':id')
+  @Patch()
   update(
     @CurrentUser() user: JwtAccessPayload,
-    @Param('id') contactInfoId: string,
     @Body() dto: UpdateContactInfoDto,
   ) {
-    return this.contactInfoService.update(user.sub, contactInfoId, dto);
+    return this.contactInfoService.update(user.sub, dto);
   }
 
-  @Delete(':id')
-  remove(
-    @CurrentUser() user: JwtAccessPayload,
-    @Param('id') contactInfoId: string,
-  ) {
-    return this.contactInfoService.remove(user.sub, contactInfoId);
+  @Delete()
+  remove(@CurrentUser() user: JwtAccessPayload) {
+    return this.contactInfoService.remove(user.sub);
   }
 }
