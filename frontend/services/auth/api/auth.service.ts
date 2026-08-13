@@ -32,7 +32,6 @@ export const login = async (dto: LoginDto) => {
 export const register = async (dto: RegisterDto) => {
   try {
     const response = await api.post("/auth/register", dto);
-
     return response.data;
   } catch (error) {
     throw error;
