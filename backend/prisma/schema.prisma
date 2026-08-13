@@ -40,6 +40,16 @@ enum OtpPurpose {
   PASSWORD_RESET
 }
 
+
+enum LinkType {
+  LINKEDIN
+  GITHUB
+  PORTFOLIO
+  FACEBOOK
+  TWITTER
+  OTHER
+}
+
 model User {
   id                    String   @id @default(uuid())
   username              String   @unique
@@ -89,12 +99,23 @@ model ContactInfo {
   id         String @id @default(uuid())
   phone      String?
   email      String?
-  links      String[]
+  links      ProfileLink[]
   country    String?
   city       String?
   profileId  String @unique
 
   profile Profile @relation(fields:[profileId], references:[id], onDelete: Cascade)
+}
+
+
+model ProfileLink {
+  id            String @id @default(uuid())
+  type          LinkType
+  url           String
+  contactInfoId String
+
+  contactInfo ContactInfo @relation(fields: [contactInfoId], references: [id], onDelete: Cascade)
+  @@unique([contactInfoId, type])
 }
 
 model Skill {
@@ -110,6 +131,7 @@ model Skill {
   resumeSkills ResumeSkill[]
 
   @@index([profileId])
+  @@unique([profileId, name])
 }
 
 model Experience {
