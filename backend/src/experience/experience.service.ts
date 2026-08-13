@@ -9,10 +9,13 @@ export class ExperienceService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Creates a work experience record for the authenticated user's profile.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param dto - Work experience data to be created.
+   * @returns The newly created experience record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async create(userId: string, dto: CreateExperienceDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -27,16 +30,21 @@ export class ExperienceService {
     return this.prisma.experience.create({
       data: {
         ...dto,
-        employmentType: dto.employmentType as EmploymentType,
         profileId: profile.id,
       },
     });
   }
 
   /**
+   * Retrieves all work experience records belonging to the authenticated user.
    *
-   * @param userId
-   * @returns
+   * Experiences are ordered by start date, with the most recent
+   * experience returned first.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @returns A list of the user's work experiences.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -50,14 +58,20 @@ export class ExperienceService {
 
     return this.prisma.experience.findMany({
       where: { profileId: profile.id },
+      orderBy: { startDate: 'desc' },
     });
   }
 
   /**
+   * Retrieves a specific work experience belonging to the authenticated user.
    *
-   * @param userId
-   * @param experienceId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param experienceId - The ID of the experience record to retrieve.
+   * @returns The requested experience record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the experience does not exist
+   * or does not belong to the authenticated user.
    */
   async findOne(userId: string, experienceId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -69,17 +83,31 @@ export class ExperienceService {
       throw new NotFoundException('Profile not found');
     }
 
-    return this.prisma.experience.findFirst({
-      where: { profileId: profile.id, id: experienceId },
+    const experience = await this.prisma.experience.findFirst({
+      where: {
+        profileId: profile.id,
+        id: experienceId,
+      },
     });
+
+    if (!experience) {
+      throw new NotFoundException('Experience not found');
+    }
+
+    return experience;
   }
 
   /**
+   * Updates a work experience belonging to the authenticated user.
    *
-   * @param userId
-   * @param experienceId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param experienceId - The ID of the experience record to update.
+   * @param dto - Updated work experience data.
+   * @returns The updated experience record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the experience does not exist
+   * or does not belong to the authenticated user.
    */
   async update(userId: string, experienceId: string, dto: UpdateExperienceDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -107,10 +135,15 @@ export class ExperienceService {
   }
 
   /**
+   * Deletes a work experience belonging to the authenticated user.
    *
-   * @param userId
-   * @param experienceId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param experienceId - The ID of the experience record to delete.
+   * @returns The deleted experience record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the experience does not exist
+   * or does not belong to the authenticated user.
    */
   async remove(userId: string, experienceId: string) {
     const profile = await this.prisma.profile.findUnique({
