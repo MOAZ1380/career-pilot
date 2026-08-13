@@ -7,6 +7,12 @@ import { UpdateCertificateDto } from './dto/update-certificate.dto';
 export class CertificateService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   *
+   * @param userId
+   * @param dto
+   * @returns
+   */
   async create(userId: string, dto: CreateCertificateDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -25,6 +31,11 @@ export class CertificateService {
     });
   }
 
+  /**
+   *
+   * @param userId
+   * @returns
+   */
   async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -40,6 +51,12 @@ export class CertificateService {
     });
   }
 
+  /**
+   *
+   * @param userId
+   * @param certificateId
+   * @returns
+   */
   async findOne(userId: string, certificateId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -61,6 +78,13 @@ export class CertificateService {
     return certificate;
   }
 
+  /**
+   *
+   * @param userId
+   * @param certificateId
+   * @param dto
+   * @returns
+   */
   async update(
     userId: string,
     certificateId: string,
@@ -90,6 +114,12 @@ export class CertificateService {
     });
   }
 
+  /**
+   *
+   * @param userId
+   * @param certificateId
+   * @returns
+   */
   async remove(userId: string, certificateId) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
