@@ -7,6 +7,15 @@ import { UpdateEducationDto } from './dto/update-education.dto';
 export class EducationService {
   constructor(private readonly prisma: PrismaService) {}
 
+  /**
+   * Creates an education record for the authenticated user's profile.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @param dto - Education data to be created.
+   * @returns The newly created education record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   */
   async create(userId: string, dto: CreateEducationDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -25,6 +34,14 @@ export class EducationService {
     });
   }
 
+  /**
+   * Retrieves all education records belonging to the authenticated user.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @returns A list of the user's education records.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   */
   async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -37,9 +54,21 @@ export class EducationService {
 
     return this.prisma.education.findMany({
       where: { profileId: profile.id },
+      orderBy: { startDate: 'desc' },
     });
   }
 
+  /**
+   * Retrieves a specific education record belonging to the authenticated user.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @param educationId - The ID of the education record to retrieve.
+   * @returns The requested education record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the education record does not exist
+   * or does not belong to the authenticated user.
+   */
   async findOne(userId: string, educationId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -50,11 +79,32 @@ export class EducationService {
       throw new NotFoundException('Profile not found');
     }
 
-    return this.prisma.education.findFirst({
-      where: { profileId: profile.id, id: educationId },
+    const education = await this.prisma.education.findFirst({
+      where: {
+        profileId: profile.id,
+        id: educationId,
+      },
     });
+
+    if (!education) {
+      throw new NotFoundException('Education not found');
+    }
+
+    return education;
   }
 
+  /**
+   * Updates an education record belonging to the authenticated user.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @param educationId - The ID of the education record to update.
+   * @param dto - Updated education data.
+   * @returns The updated education record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the education record does not exist
+   * or does not belong to the authenticated user.
+   */
   async update(userId: string, educationId: string, dto: UpdateEducationDto) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -80,6 +130,17 @@ export class EducationService {
     });
   }
 
+  /**
+   * Deletes an education record belonging to the authenticated user.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @param educationId - The ID of the education record to delete.
+   * @returns The deleted education record.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the education record does not exist
+   * or does not belong to the authenticated user.
+   */
   async remove(userId: string, educationId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
