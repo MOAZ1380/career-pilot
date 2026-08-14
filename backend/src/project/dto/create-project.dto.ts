@@ -17,10 +17,12 @@ export class CreateProjectDto {
   @MaxLength(2000)
   description: string;
 
+  // @IsUrl({ protocols: ['http', 'https'] })
   @IsOptional()
   @IsUrl()
   github?: string;
 
+  // @IsUrl({ protocols: ['http', 'https'] })
   @IsOptional()
   @IsUrl()
   liveDemo?: string;
