@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateProfileDto } from './dto/create-profile.dto';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -8,10 +12,13 @@ export class ProfileService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Creates a profile for the authenticated user.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param dto - Profile data to be created.
+   * @returns The newly created profile.
+   *
+   * @throws ConflictException If a profile already exists for the user.
    */
   async create(userId: string, dto: CreateProfileDto) {
     const existingProfile = await this.prisma.profile.findUnique({
@@ -19,7 +26,7 @@ export class ProfileService {
     });
 
     if (existingProfile) {
-      throw new NotFoundException('Profile already exists');
+      throw new ConflictException('Profile already exists');
     }
 
     return this.prisma.profile.create({
@@ -31,20 +38,42 @@ export class ProfileService {
   }
 
   /**
+   * Retrieves the complete profile of the authenticated user.
    *
-   * @param userId
-   * @returns
+   * Includes contact information, profile links, skills, experiences,
+   * projects, education, certificates, and languages.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @returns The user's complete profile.
+   *
+   * @throws NotFoundException If the profile does not exist.
    */
   async findMe(userId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
       include: {
-        contactInfo: true,
+        contactInfo: {
+          include: {
+            links: true,
+          },
+        },
         skills: true,
-        experiences: true,
+        experiences: {
+          orderBy: {
+            startDate: 'desc',
+          },
+        },
+        certificates: {
+          orderBy: {
+            issueDate: 'desc',
+          },
+        },
+        educations: {
+          orderBy: {
+            startDate: 'desc',
+          },
+        },
         projects: true,
-        educations: true,
-        certificates: true,
         languages: true,
       },
     });
@@ -57,10 +86,13 @@ export class ProfileService {
   }
 
   /**
+   * Updates the profile of the authenticated user.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param dto - Updated profile data.
+   * @returns The updated profile.
+   *
+   * @throws NotFoundException If the profile does not exist.
    */
   async update(userId: string, dto: UpdateProfileDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -80,9 +112,15 @@ export class ProfileService {
   }
 
   /**
+   * Deletes the profile of the authenticated user.
    *
-   * @param userId
-   * @returns
+   * Related profile data is automatically deleted according
+   * to the configured cascade delete relations.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @returns The deleted profile.
+   *
+   * @throws NotFoundException If the profile does not exist.
    */
   async remove(userId: string) {
     const profile = await this.prisma.profile.findUnique({

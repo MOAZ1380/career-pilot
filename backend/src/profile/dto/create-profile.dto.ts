@@ -27,6 +27,7 @@ export class CreateProfileDto {
   @MaxLength(1000)
   bio?: string;
 
+  // @IsUrl({ protocols: ['http', 'https'] })
   @IsOptional()
   @IsUrl()
   image?: string;
