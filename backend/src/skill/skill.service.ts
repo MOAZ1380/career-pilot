@@ -1,5 +1,4 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { SkillLevel } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSkillDto } from './dto/create-skill.dto';
 import { UpdateSkillDto } from './dto/update-skill.dto';
@@ -9,10 +8,13 @@ export class SkillService {
   constructor(private readonly prisma: PrismaService) {}
 
   /**
+   * Creates a new skill for the authenticated user's profile.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param dto - The skill data to create.
+   * @returns The newly created skill.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async create(userId: string, dto: CreateSkillDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -27,16 +29,18 @@ export class SkillService {
     return this.prisma.skill.create({
       data: {
         ...dto,
-        level: dto.level as SkillLevel,
         profileId: profile.id,
       },
     });
   }
 
   /**
+   * Retrieves all skills belonging to the authenticated user's profile.
    *
-   * @param userId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @returns A list of the user's skills.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
    */
   async findAll(userId: string) {
     const profile = await this.prisma.profile.findUnique({
@@ -53,6 +57,16 @@ export class SkillService {
     });
   }
 
+  /**
+   * Retrieves a specific skill belonging to the authenticated user's profile.
+   *
+   * @param userId - The ID of the authenticated user.
+   * @param skillId - The ID of the skill to retrieve.
+   * @returns The requested skill.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the skill does not exist or does not belong to the user.
+   */
   async findOne(userId: string, skillId: string) {
     const profile = await this.prisma.profile.findUnique({
       where: { userId },
@@ -75,10 +89,15 @@ export class SkillService {
   }
 
   /**
+   * Updates a specific skill belonging to the authenticated user's profile.
    *
-   * @param userId
-   * @param dto
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param skillId - The ID of the skill to update.
+   * @param dto - The updated skill data.
+   * @returns The updated skill.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the skill does not exist or does not belong to the user.
    */
   async update(userId: string, skillId: string, dto: UpdateSkillDto) {
     const profile = await this.prisma.profile.findUnique({
@@ -106,9 +125,14 @@ export class SkillService {
   }
 
   /**
+   * Deletes a specific skill belonging to the authenticated user's profile.
    *
-   * @param userId
-   * @returns
+   * @param userId - The ID of the authenticated user.
+   * @param skillId - The ID of the skill to delete.
+   * @returns The deleted skill.
+   *
+   * @throws NotFoundException If the user's profile does not exist.
+   * @throws NotFoundException If the skill does not exist or does not belong to the user.
    */
   async remove(userId: string, skillId: string) {
     const profile = await this.prisma.profile.findUnique({

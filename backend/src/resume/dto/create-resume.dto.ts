@@ -29,21 +29,25 @@ export class CreateResumeDto {
 
   @IsArray()
   @ArrayUnique()
+  @IsOptional()
   @IsUUID('4', { each: true })
   skillIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
+  @IsOptional()
   @IsUUID('4', { each: true })
   experienceIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
+  @IsOptional()
   @IsUUID('4', { each: true })
   educationIds: string[] = [];
 
   @IsArray()
   @ArrayUnique()
+  @IsOptional()
   @IsUUID('4', { each: true })
   projectIds: string[] = [];
 
@@ -55,6 +59,7 @@ export class CreateResumeDto {
 
   @IsArray()
   @ArrayUnique()
+  @IsOptional()
   @IsUUID('4', { each: true })
   languageIds: string[] = [];
 

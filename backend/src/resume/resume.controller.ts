@@ -25,7 +25,7 @@ export class ResumeController {
     return this.resumeService.create(user.sub, dto);
   }
 
-  @Post('/by-job-description')
+  @Post('by-job-description')
   createByJobDescription(
     @CurrentUser() user: JwtAccessPayload,
     @Body('jobDescription') jobDescription: string,
@@ -38,7 +38,7 @@ export class ResumeController {
     return this.resumeService.findAll(user.sub);
   }
 
-  @Get('/:resumeId')
+  @Get(':resumeId')
   findOne(
     @CurrentUser() user: JwtAccessPayload,
     @Param('resumeId') resumeId: string,
@@ -46,7 +46,7 @@ export class ResumeController {
     return this.resumeService.findOne(user.sub, resumeId);
   }
 
-  @Patch('/:resumeId')
+  @Patch(':resumeId')
   update(
     @CurrentUser() user: JwtAccessPayload,
     @Param('resumeId') resumeId: string,
@@ -55,7 +55,7 @@ export class ResumeController {
     return this.resumeService.update(user.sub, resumeId, dto);
   }
 
-  @Delete('/:resumeId')
+  @Delete(':resumeId')
   remove(
     @CurrentUser() user: JwtAccessPayload,
     @Param('resumeId') resumeId: string,
