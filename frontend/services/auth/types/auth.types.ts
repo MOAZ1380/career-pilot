@@ -1,29 +1,130 @@
-export interface Certificate {
+// types/auth.types.ts
+
+// ==================== User ====================
+
+export interface CurrentUser {
   id: string;
-  name: string;
-  issuer: string;
-  issueDate: string;
-  expirationDate?: string | null;
-  credentialId?: string | null;
-  credentialUrl?: string | null;
-  profileId: string;
+  username: string;
+  email: string;
+  isVerified: boolean;
   createdAt: string;
   updatedAt: string;
 }
 
-export interface CreateCertificateDto {
-  name: string;
-  issuer: string;
-  issueDate: string;
-  expirationDate?: string;
-  credentialId?: string;
-  credentialUrl?: string;
+// ==================== Requests ====================
+
+export interface RegisterDto {
+  username: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
 }
 
-export interface UpdateCertificateDto extends Partial<CreateCertificateDto> {}
+export interface LoginDto {
+  email: string;
+  password: string;
+}
 
-export interface ApiErrorShape {
-  message: string | string[];
-  error?: string;
-  statusCode: number;
+export interface VerifyEmailDto {
+  email: string;
+  otp: string;
+}
+
+export interface ResendVerificationOtpDto {
+  email: string;
+}
+
+export interface ForgotPasswordDto {
+  email: string;
+}
+
+export interface VerifyResetOtpDto {
+  email: string;
+  otp: string;
+}
+
+export interface ResetPasswordDto {
+  email: string;
+  resetToken: string;
+  password: string;
+  confirmPassword: string;
+}
+
+export interface RefreshTokenDto {
+  refreshToken: string;
+}
+
+// ==================== Responses ====================
+
+export interface RegisterResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface VerifyEmailResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface ResendVerificationOtpResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface LoginResponse {
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+    user: CurrentUser;
+  };
+}
+
+export interface RefreshResponse {
+  success: boolean;
+  message: string;
+  data: {
+    accessToken: string;
+  };
+}
+
+export interface LogoutResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface LogoutAllResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface ForgotPasswordResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface VerifyResetOtpResponse {
+  success: boolean;
+  message: string;
+  data: {
+    resetToken: string;
+  };
+}
+
+export interface ResetPasswordResponse {
+  success: boolean;
+  message: string;
+  data: null;
+}
+
+export interface CurrentUserResponse {
+  success: boolean;
+  message: string;
+  data: CurrentUser;
 }

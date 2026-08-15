@@ -1,13 +1,12 @@
 import api from "@/lib/axios";
 import { setAccessToken, clearAccessToken } from "@/lib/auth-token";
-
-import type {
+import {
   LoginDto,
   LoginResponse,
-  CurrentUserResponse,
   RegisterDto,
   VerifyEmailDto,
   ResendVerificationOtpDto,
+  CurrentUserResponse,
   ForgotPasswordDto,
   VerifyResetOtpDto,
   ResetPasswordDto,
