@@ -11,9 +11,9 @@ export interface Profile {
   firstName: string;
   lastName: string;
 
-  headline?: string | null;
-  bio?: string | null;
-  image?: string | null;
+  headline: string | null;
+  bio: string | null;
+  image: string | null;
 
   userId: string;
 
