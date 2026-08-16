@@ -1,5 +1,3 @@
-// types/auth.types.ts
-
 // ==================== User ====================
 
 export interface CurrentUser {
