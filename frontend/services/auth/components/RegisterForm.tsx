@@ -10,9 +10,11 @@ import {
   type RegisterFormData,
 } from "../schemas/register.schema";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterForm() {
   const [success, setSuccess] = useState("");
+  const router = useRouter();
   const {
     register: registerInput,
     handleSubmit,
@@ -28,8 +30,8 @@ export default function RegisterForm() {
     try {
       const response = await register(data);
       setSuccess(response.message);
-      // بعدين ممكن تعمل:
-      // router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
+
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}`);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message;
@@ -57,99 +59,101 @@ export default function RegisterForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
-      {/* Username */}
-      <div>
-        <label htmlFor="username">Username</label>
+    <div className="w-full max-w-md rounded border p-6 shadow">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 " noValidate>
+        {/* Username */}
+        <div>
+          <label htmlFor="username">Username</label>
 
-        <input
-          id="username"
-          type="text"
-          placeholder="Username"
-          disabled={isSubmitting}
-          autoComplete="username"
-          {...registerInput("username")}
-          className="w-full rounded border p-2"
-        />
+          <input
+            id="username"
+            type="text"
+            placeholder="Username"
+            disabled={isSubmitting}
+            autoComplete="username"
+            {...registerInput("username")}
+            className="w-full rounded border p-2"
+          />
 
-        {errors.username && (
-          <p className="text-sm text-red-500">{errors.username.message}</p>
+          {errors.username && (
+            <p className="text-sm text-red-500">{errors.username.message}</p>
+          )}
+        </div>
+
+        {/* Email */}
+        <div>
+          <label htmlFor="email">Email</label>
+
+          <input
+            id="email"
+            type="email"
+            placeholder="Email"
+            disabled={isSubmitting}
+            autoComplete="email"
+            {...registerInput("email")}
+            className="w-full rounded border p-2"
+          />
+
+          {errors.email && (
+            <p className="text-sm text-red-500">{errors.email.message}</p>
+          )}
+        </div>
+
+        {/* Password */}
+        <div>
+          <label htmlFor="password">Password</label>
+
+          <input
+            id="password"
+            type="password"
+            placeholder="Password"
+            disabled={isSubmitting}
+            autoComplete="new-password"
+            {...registerInput("password")}
+            className="w-full rounded border p-2"
+          />
+
+          {errors.password && (
+            <p className="text-sm text-red-500">{errors.password.message}</p>
+          )}
+        </div>
+
+        {/* Confirm Password */}
+        <div>
+          <label htmlFor="confirmPassword">Confirm Password</label>
+
+          <input
+            id="confirmPassword"
+            type="password"
+            placeholder="Confirm Password"
+            disabled={isSubmitting}
+            autoComplete="new-password"
+            {...registerInput("confirmPassword")}
+            className="w-full rounded border p-2"
+          />
+
+          {errors.confirmPassword && (
+            <p className="text-sm text-red-500">
+              {errors.confirmPassword.message}
+            </p>
+          )}
+        </div>
+
+        {/* Server / General Error */}
+        {errors.root && (
+          <p className="text-sm text-red-500">{errors.root.message}</p>
         )}
-      </div>
 
-      {/* Email */}
-      <div>
-        <label htmlFor="email">Email</label>
-
-        <input
-          id="email"
-          type="email"
-          placeholder="Email"
+        <button
+          type="submit"
           disabled={isSubmitting}
-          autoComplete="email"
-          {...registerInput("email")}
-          className="w-full rounded border p-2"
-        />
+          className="w-full rounded bg-black p-2 text-white disabled:opacity-50"
+        >
+          {isSubmitting ? "Creating account..." : "Create account"}
+        </button>
 
-        {errors.email && (
-          <p className="text-sm text-red-500">{errors.email.message}</p>
-        )}
-      </div>
-
-      {/* Password */}
-      <div>
-        <label htmlFor="password">Password</label>
-
-        <input
-          id="password"
-          type="password"
-          placeholder="Password"
-          disabled={isSubmitting}
-          autoComplete="new-password"
-          {...registerInput("password")}
-          className="w-full rounded border p-2"
-        />
-
-        {errors.password && (
-          <p className="text-sm text-red-500">{errors.password.message}</p>
-        )}
-      </div>
-
-      {/* Confirm Password */}
-      <div>
-        <label htmlFor="confirmPassword">Confirm Password</label>
-
-        <input
-          id="confirmPassword"
-          type="password"
-          placeholder="Confirm Password"
-          disabled={isSubmitting}
-          autoComplete="new-password"
-          {...registerInput("confirmPassword")}
-          className="w-full rounded border p-2"
-        />
-
-        {errors.confirmPassword && (
-          <p className="text-sm text-red-500">
-            {errors.confirmPassword.message}
-          </p>
-        )}
-      </div>
-
-      {/* Server / General Error */}
-      {errors.root && (
-        <p className="text-sm text-red-500">{errors.root.message}</p>
-      )}
-
-      <button
-        type="submit"
-        disabled={isSubmitting}
-        className="w-full rounded bg-black p-2 text-white disabled:opacity-50"
-      >
-        {isSubmitting ? "Creating account..." : "Create account"}
-      </button>
-
-      {success && <p className="text-sm text-green-500">{success}</p>}
-    </form>
+        {success && <p className="text-sm text-green-500">{success}</p>}
+      </form>
+    </div>
   );
 }

@@ -7,8 +7,8 @@ import ResumeForm from "@/services/resume/components/ResumeForm";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <RegisterForm />
+    <div className="flex flex-col flex-1 items-center justify-center font-sans">
+      <ExperienceForm />
     </div>
   );
 }

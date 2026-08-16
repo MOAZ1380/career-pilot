@@ -143,18 +143,14 @@ export class AuthService {
     }
 
     // Send verification email (OUTSIDE transaction)
-    const emailSent = await this.emailService.sendVerificationEmail(
-      email,
-      username,
-      otp,
-    );
-
-    if (!emailSent) {
-      this.logger.warn(
-        `Verification email failed to send for user ${user.id}. User can retry with resend endpoint.`,
-      );
-      // Don't fail registration - user can request resend
-    }
+    this.emailService
+      .sendVerificationEmail(email, username, otp)
+      .catch((error) => {
+        this.logger.error(
+          `Failed to send verification email for user ${user.id}`,
+          error,
+        );
+      });
 
     return {
       success: true,
