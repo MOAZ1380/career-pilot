@@ -1,11 +1,11 @@
 import { Suspense } from "react";
-import VerifyEmailForm from "@/services/auth/components/VerifyEmailForm";
+import ResetPasswordForm from "@/services/auth/components/ResetPasswordForm";
 
-export default function VerifyEmailPage() {
+export default function ResetPasswordPage() {
   return (
     <div className="flex flex-1 flex-col items-center justify-center font-sans">
       <Suspense>
-        <VerifyEmailForm />
+        <ResetPasswordForm />
       </Suspense>
     </div>
   );

@@ -165,11 +165,22 @@ api.interceptors.response.use(
      * Only handle 401 Unauthorized errors.
      *
      * Also stop if this request has already
-     * been retried.
+     * been retried, or if the failed request
+     * is the refresh request itself.
      *
-     * This prevents an infinite retry loop.
+     * Without the refresh check, the refresh
+     * request's own 401 would be queued behind
+     * the still-running refresh and neither
+     * promise would ever settle.
+     *
+     * This prevents an infinite retry loop
+     * and a self-deadlock.
      */
-    if (error.response?.status !== 401 || originalRequest?._retry) {
+    if (
+      error.response?.status !== 401 ||
+      originalRequest?._retry ||
+      originalRequest?.url === "/auth/refresh"
+    ) {
       return Promise.reject(error);
     }
 
@@ -283,10 +294,15 @@ api.interceptors.response.use(
       clearAccessToken();
 
       /**
-       * Return the refresh error
-       * to the original caller.
+       * Reject with the original request error.
+       *
+       * The refresh failure is an internal
+       * recovery detail; the caller needs the
+       * message of the request it actually made
+       * (e.g. "Invalid or expired reset code"),
+       * not the refresh endpoint's error.
        */
-      return Promise.reject(refreshError);
+      return Promise.reject(error);
     } finally {
       /**
        * Whether the refresh succeeded or failed,
