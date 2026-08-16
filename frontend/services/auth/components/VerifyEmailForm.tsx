@@ -4,6 +4,7 @@ import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
+import ResendVerificationOtp from "./ResendVerificationOtp";
 
 import { verifyEmail } from "../api/auth.service";
 import {
@@ -113,6 +114,8 @@ export default function VerifyEmailForm() {
         >
           {isSubmitting ? "Verifying..." : "Verify Email"}
         </button>
+
+        {email && <ResendVerificationOtp email={email} />}
       </form>
     </div>
   );
