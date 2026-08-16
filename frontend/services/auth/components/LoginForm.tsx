@@ -25,6 +25,7 @@ export default function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     try {
       await login(data);
+
       router.push("/dashboard");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
