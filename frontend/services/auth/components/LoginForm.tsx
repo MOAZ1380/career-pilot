@@ -26,7 +26,7 @@ export default function LoginForm() {
     try {
       await login(data);
 
-      router.push("/dashboard");
+      router.push("/profile");
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message;
