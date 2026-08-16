@@ -1,31 +1,34 @@
 "use client";
 
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-import { login } from "../api/auth.service";
-import { loginSchema, type LoginFormData } from "../schemas/login.schema";
+import { forgotPassword } from "../api/auth.service";
+import {
+  forgotPasswordSchema,
+  type ForgotPasswordFormData,
+} from "../schemas/forgot-password.schema";
 
-export default function LoginForm() {
+export default function ForgotPasswordForm() {
   const router = useRouter();
 
   const {
-    register: registerInput,
+    register,
     handleSubmit,
     setError,
     formState: { errors, isSubmitting },
-  } = useForm<LoginFormData>({
-    resolver: zodResolver(loginSchema),
+  } = useForm<ForgotPasswordFormData>({
+    resolver: zodResolver(forgotPasswordSchema),
     mode: "onBlur",
   });
 
-  const onSubmit = async (data: LoginFormData) => {
+  const onSubmit = async (data: ForgotPasswordFormData) => {
     try {
-      await login(data);
-      router.push("/dashboard");
+      await forgotPassword(data);
+
+      router.push(`/verify-reset-otp?email=${encodeURIComponent(data.email)}`);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         const message = error.response?.data?.message;
@@ -38,7 +41,7 @@ export default function LoginForm() {
         } else {
           setError("root", {
             type: "server",
-            message: "Invalid email or password.",
+            message: "Something went wrong. Please try again.",
           });
         }
 
@@ -54,10 +57,10 @@ export default function LoginForm() {
 
   return (
     <div className="w-full max-w-md rounded border p-6 shadow">
-      <h1 className="mb-2 text-2xl font-bold">Login</h1>
+      <h1 className="mb-2 text-2xl font-bold">Forgot Password</h1>
 
       <p className="mb-6 text-sm text-gray-600">
-        Sign in to your CareerPilot account
+        Enter your account email and we will send you a password reset code
       </p>
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
@@ -73,7 +76,7 @@ export default function LoginForm() {
             placeholder="Email"
             disabled={isSubmitting}
             autoComplete="email"
-            {...registerInput("email")}
+            {...register("email")}
             className="w-full rounded border p-2"
           />
 
@@ -82,52 +85,19 @@ export default function LoginForm() {
           )}
         </div>
 
-        {/* Password */}
-        <div>
-          <label htmlFor="password" className="mb-1 block">
-            Password
-          </label>
-
-          <input
-            id="password"
-            type="password"
-            placeholder="Password"
-            disabled={isSubmitting}
-            autoComplete="current-password"
-            {...registerInput("password")}
-            className="w-full rounded border p-2"
-          />
-
-          {errors.password && (
-            <p className="mt-1 text-sm text-red-500">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
         {/* Server / General Error */}
         {errors.root && (
           <p className="text-sm text-red-500">{errors.root.message}</p>
         )}
 
-        {/* Login Button */}
+        {/* Submit */}
         <button
           type="submit"
           disabled={isSubmitting}
           className="w-full rounded bg-black p-2 text-white disabled:opacity-50"
         >
-          {isSubmitting ? "Signing in..." : "Sign in"}
+          {isSubmitting ? "Sending..." : "Send reset code"}
         </button>
-
-        {/* Forgot Password */}
-        <div className="text-center">
-          <Link
-            href="/forgot-password"
-            className="text-sm font-medium text-black underline"
-          >
-            Forgot password?
-          </Link>
-        </div>
       </form>
     </div>
   );

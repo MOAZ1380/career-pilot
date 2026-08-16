@@ -4,8 +4,7 @@ import { useEffect, useState } from "react";
 import { createResume } from "../api/resume.service";
 import { CreateResumeDto, ResumeTemplate } from "../types/resume";
 import { getProfile } from "@/services/profile/api/profile.service";
-import { info } from "console";
-import { Certificate } from "crypto";
+import { ProfileResponse } from "@/services/profile/types/profile";
 
 const initialState: CreateResumeDto = {
   title: "",
@@ -21,19 +20,9 @@ const initialState: CreateResumeDto = {
   languageIds: [],
 };
 
-const initialProfile = {
-  contactInfo: null,
-  skills: [],
-  experiences: [],
-  projects: [],
-  educations: [],
-  certificates: [],
-  languages: [],
-};
-
 export default function ResumeForm() {
   const [form, setForm] = useState<CreateResumeDto>(initialState);
-  const [profile, setProfile] = useState(initialProfile);
+  const [profile, setProfile] = useState<ProfileResponse | null>(null);
 
   useEffect(() => {
     const loadProfile = async () => {
@@ -144,7 +133,7 @@ export default function ResumeForm() {
 
       <label>Skills</label>
 
-      {profile.skills.map((skill) => (
+      {profile?.skills.map((skill) => (
         <label key={skill.id} className="flex gap-2">
           <input
             type="checkbox"
@@ -164,7 +153,7 @@ export default function ResumeForm() {
       ))}
 
       <label>Experiences</label>
-      {profile.experiences.map((exp) => (
+      {profile?.experiences.map((exp) => (
         <label key={exp.id} className="flex gap-2">
           <input
             type="checkbox"
@@ -183,7 +172,7 @@ export default function ResumeForm() {
       ))}
 
       <label>Projects</label>
-      {profile.projects.map((project) => (
+      {profile?.projects.map((project) => (
         <label key={project.id} className="flex gap-2">
           <input
             type="checkbox"
@@ -202,7 +191,7 @@ export default function ResumeForm() {
       ))}
 
       <label>Certificates</label>
-      {profile.certificates.map((certificate) => (
+      {profile?.certificates.map((certificate) => (
         <label key={certificate.id} className="flex gap-2">
           <input
             type="checkbox"
@@ -221,7 +210,7 @@ export default function ResumeForm() {
       ))}
 
       <label>Languages</label>
-      {profile.languages.map((language) => (
+      {profile?.languages.map((language) => (
         <label key={language.id} className="flex gap-2">
           <input
             type="checkbox"
