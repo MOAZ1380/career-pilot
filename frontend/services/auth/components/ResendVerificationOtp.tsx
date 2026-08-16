@@ -60,7 +60,7 @@ export default function ResendVerificationOtp({
 
   return (
     <div className="text-center">
-      <p className="text-sm text-gray-600">Didn't receive the code?</p>
+      <p className="text-sm text-gray-600">{"Didn't receive the code?"}</p>
 
       <button
         type="button"

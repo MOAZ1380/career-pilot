@@ -10,6 +10,11 @@ import {
   ForgotPasswordDto,
   VerifyResetOtpDto,
   ResetPasswordDto,
+  LogoutResponse,
+  LogoutAllResponse,
+  ForgotPasswordResponse,
+  VerifyResetOtpResponse,
+  ResetPasswordResponse,
 } from "../types/auth.types";
 
 // Login
@@ -73,7 +78,7 @@ export const getCurrentUser = async () => {
 // Logout current device
 export const logout = async () => {
   try {
-    const response = await api.post("/auth/logout");
+    const response = await api.post<LogoutResponse>("/auth/logout");
 
     return response.data;
   } finally {
@@ -84,7 +89,7 @@ export const logout = async () => {
 // Logout all devices
 export const logoutAll = async () => {
   try {
-    const response = await api.post("/auth/logout-all");
+    const response = await api.post<LogoutAllResponse>("/auth/logout-all");
 
     return response.data;
   } finally {
@@ -95,7 +100,10 @@ export const logoutAll = async () => {
 // Forgot Password
 export const forgotPassword = async (dto: ForgotPasswordDto) => {
   try {
-    const response = await api.post("/auth/forgot-password", dto);
+    const response = await api.post<ForgotPasswordResponse>(
+      "/auth/forgot-password",
+      dto,
+    );
 
     return response.data;
   } catch (error) {
@@ -106,7 +114,10 @@ export const forgotPassword = async (dto: ForgotPasswordDto) => {
 // Verify Reset OTP
 export const verifyResetOtp = async (dto: VerifyResetOtpDto) => {
   try {
-    const response = await api.post("/auth/verify-reset-otp", dto);
+    const response = await api.post<VerifyResetOtpResponse>(
+      "/auth/verify-reset-otp",
+      dto,
+    );
 
     return response.data;
   } catch (error) {
@@ -117,7 +128,10 @@ export const verifyResetOtp = async (dto: VerifyResetOtpDto) => {
 // Reset Password
 export const resetPassword = async (dto: ResetPasswordDto) => {
   try {
-    const response = await api.post("/auth/reset-password", dto);
+    const response = await api.post<ResetPasswordResponse>(
+      "/auth/reset-password",
+      dto,
+    );
 
     return response.data;
   } catch (error) {
