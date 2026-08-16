@@ -13,7 +13,7 @@ export const createProfile = async (
 ): Promise<ProfileResponse> => {
   try {
     const response = await axios.post(BASE_URL, data);
-    return response.data;
+    return response.data.date;
   } catch (error) {
     console.error("Error creating profile:", error);
     throw error;
@@ -23,7 +23,7 @@ export const createProfile = async (
 export const getProfile = async (): Promise<ProfileResponse> => {
   try {
     const response = await axios.get(BASE_URL);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Error fetching profile:", error);
     throw error;
@@ -35,7 +35,7 @@ export const updateProfile = async (
 ): Promise<ProfileResponse> => {
   try {
     const response = await axios.patch(BASE_URL, data);
-    return response.data;
+    return response.data.data;
   } catch (error) {
     console.error("Error updating profile:", error);
     throw error;

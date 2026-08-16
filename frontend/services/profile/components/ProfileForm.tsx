@@ -40,7 +40,6 @@ export default function ProfileForm() {
     const loadProfile = async () => {
       try {
         const profile = await getProfile();
-
         setProfileExists(true);
 
         reset({
@@ -89,13 +88,28 @@ export default function ProfileForm() {
 
     try {
       if (profileExists) {
-        await updateProfile(cleanedData);
+        const profile = await updateProfile(cleanedData);
+
+        reset({
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          headline: profile.headline ?? "",
+          bio: profile.bio ?? "",
+          image: profile.image ?? "",
+        });
 
         setSuccess("Profile updated successfully.");
       } else {
-        await createProfile(cleanedData);
+        const profile = await createProfile(cleanedData);
 
         setProfileExists(true);
+        reset({
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+          headline: profile.headline ?? "",
+          bio: profile.bio ?? "",
+          image: profile.image ?? "",
+        });
 
         setSuccess("Profile created successfully.");
       }

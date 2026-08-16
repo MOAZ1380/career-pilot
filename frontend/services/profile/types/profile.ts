@@ -5,6 +5,7 @@ import { Language } from "@/services/language/types/language";
 import { Skill } from "@/services/skill/types/skill";
 import { Certificate } from "@/services/certificate/types/certificate";
 import { Project } from "@/services/project/types/project";
+
 export interface Profile {
   id: string;
 
@@ -34,7 +35,6 @@ export interface ProfileResponse extends Profile {
 export interface CreateProfileDto {
   firstName: string;
   lastName: string;
-
   headline?: string;
   bio?: string;
   image?: string;
