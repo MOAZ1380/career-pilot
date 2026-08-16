@@ -11,7 +11,7 @@ import {
   type ForgotPasswordFormData,
 } from "../schemas/forgot-password.schema";
 
-export default function ForgotPasswordForm() {
+export default function ForgetPasswordForm() {
   const router = useRouter();
 
   const {

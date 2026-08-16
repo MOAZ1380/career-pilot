@@ -23,7 +23,7 @@ export default function ResetPasswordForm() {
 
   useEffect(() => {
     if (!hasResetToken || !email) {
-      router.replace("/forgot-password");
+      router.replace("/forget-password");
     }
   }, [hasResetToken, email, router]);
 
