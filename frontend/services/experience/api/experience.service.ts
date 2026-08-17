@@ -1,4 +1,4 @@
-import axios from "@/lib/axios";
+import api from "@/lib/axios";
 import {
   CreateExperienceDto,
   Experience,
@@ -10,42 +10,33 @@ const BASE_URL = "/experience";
 export const createExperience = async (
   data: CreateExperienceDto,
 ): Promise<Experience> => {
-  try {
-    const response = await axios.post(BASE_URL, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error creating experience:", error);
-    throw error;
-  }
+  const response = await api.post(BASE_URL, data);
+  return response.data.data;
 };
 
 export const getExperiences = async (): Promise<Experience[]> => {
-  try {
-    const response = await axios.get(BASE_URL);
-    return response.data;
-  } catch (error) {
-    console.error("Error fetching experiences:", error);
-    throw error;
-  }
+  const response = await api.get(BASE_URL);
+  return response.data.data;
+};
+
+export const getExperienceById = async (
+  id: string,
+): Promise<Experience> => {
+  const response = await api.get(`${BASE_URL}/${encodeURIComponent(id)}`);
+  return response.data.data;
 };
 
 export const updateExperience = async (
-  data: UpdateExperienceDto,
+  id: string,
+  data: Omit<UpdateExperienceDto, "id">,
 ): Promise<Experience> => {
-  try {
-    const response = await axios.patch(BASE_URL, data);
-    return response.data;
-  } catch (error) {
-    console.error("Error updating experience:", error);
-    throw error;
-  }
+  const response = await api.patch(
+    `${BASE_URL}/${encodeURIComponent(id)}`,
+    data,
+  );
+  return response.data.data;
 };
 
-export const deleteExperience = async (): Promise<void> => {
-  try {
-    await axios.delete(BASE_URL);
-  } catch (error) {
-    console.error("Error deleting experience:", error);
-    throw error;
-  }
+export const deleteExperience = async (id: string): Promise<void> => {
+  await api.delete(`${BASE_URL}/${encodeURIComponent(id)}`);
 };
