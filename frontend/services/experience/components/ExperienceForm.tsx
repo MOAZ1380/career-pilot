@@ -106,7 +106,6 @@ export default function ExperienceForm() {
 
   const resetForm = useCallback(() => {
     setEditingId(null);
-    setSuccess("");
     clearErrors("root");
     reset({ ...EMPTY_FORM });
   }, [reset, clearErrors]);
