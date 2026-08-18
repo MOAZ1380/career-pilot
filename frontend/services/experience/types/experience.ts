@@ -1,29 +1,33 @@
-export type EmploymentType =
-  | "FULL_TIME"
-  | "PART_TIME"
-  | "CONTRACT"
-  | "INTERNSHIP";
+export const EMPLOYMENT_TYPE = [
+  "FULL_TIME",
+  "PART_TIME",
+  "CONTRACT",
+  "INTERNSHIP",
+  "FREELANCE",
+] as const;
+
+export type EmploymentType = (typeof EMPLOYMENT_TYPE)[number];
+
+export const EMPLOYMENT_TYPE_LABELS: Record<EmploymentType, string> = {
+  FULL_TIME: "Full Time",
+  PART_TIME: "Part Time",
+  CONTRACT: "Contract",
+  INTERNSHIP: "Internship",
+  FREELANCE: "Freelance",
+};
 
 export interface Experience {
   id: string;
-
   company: string;
   position: string;
   employmentType: EmploymentType;
-
   location?: string | null;
-
   startDate: string;
   endDate?: string | null;
-
   currentlyWorking: boolean;
-
   description: string[];
-
   technologies: string[];
-
   profileId: string;
-
   createdAt: string;
   updatedAt: string;
 }
@@ -31,19 +35,15 @@ export interface Experience {
 export interface CreateExperienceDto {
   company: string;
   position: string;
-
   employmentType: EmploymentType;
-
   location?: string;
-
   startDate: string;
   endDate?: string;
-
   currentlyWorking: boolean;
-
   description: string[];
-
   technologies: string[];
 }
 
-export interface UpdateExperienceDto extends Partial<CreateExperienceDto> {}
+export interface UpdateExperienceDto extends Partial<CreateExperienceDto> {
+  id: string;
+}
