@@ -5,14 +5,15 @@ const optionalString = (schema: z.ZodString) =>
   schema.optional().or(z.literal(""));
 
 const profileLinkSchema = z.object({
-  type: z.nativeEnum(LinkType, { message: "Invalid link type" }),
+  type: z.nativeEnum(LinkType, {
+    message: "Invalid link type",
+  }),
   url: z
     .string()
     .trim()
     .url("Invalid URL")
     .max(500, "URL must not exceed 500 characters"),
 });
-
 export const contactInfoSchema = z.object({
   phone: optionalString(
     z.string().max(20, "Phone must not exceed 20 characters"),
