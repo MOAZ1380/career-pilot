@@ -11,9 +11,9 @@ export const createContactInfo = async (
   data: CreateContactInfoDto,
 ): Promise<ContactInfo> => {
   try {
-    console.log("Creating contact info with data:", data); // Debugging line
     const response = await axios.post(BASE_URL, data);
-    return response.data;
+
+    return response.data.data;
   } catch (error) {
     console.error("Error creating contact info:", error);
     throw error;
@@ -21,17 +21,34 @@ export const createContactInfo = async (
 };
 
 export const getContactInfo = async (): Promise<ContactInfo> => {
-  const response = await axios.get(BASE_URL);
-  return response.data;
+  try {
+    const response = await axios.get(BASE_URL);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error fetching contact info:", error);
+    throw error;
+  }
 };
 
 export const updateContactInfo = async (
   data: UpdateContactInfoDto,
 ): Promise<ContactInfo> => {
-  const response = await axios.patch(BASE_URL, data);
-  return response.data;
+  try {
+    const response = await axios.patch(BASE_URL, data);
+
+    return response.data.data;
+  } catch (error) {
+    console.error("Error updating contact info:", error);
+    throw error;
+  }
 };
 
 export const deleteContactInfo = async (): Promise<void> => {
-  await axios.delete(BASE_URL);
+  try {
+    await axios.delete(BASE_URL);
+  } catch (error) {
+    console.error("Error deleting contact info:", error);
+    throw error;
+  }
 };

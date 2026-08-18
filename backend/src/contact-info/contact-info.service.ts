@@ -4,7 +4,10 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
-import { CreateContactInfoDto } from './dto/create-contact-info.dto';
+import {
+  CreateContactInfoDto,
+  CreateProfileLinkDto,
+} from './dto/create-contact-info.dto';
 import { UpdateContactInfoDto } from './dto/update-contact-info.dto';
 
 @Injectable()
@@ -41,6 +44,8 @@ export class ContactInfoService {
     }
 
     const { links, ...contactInfoData } = dto;
+
+    this.validateUniqueLinkTypes(links);
 
     return this.prisma.contactInfo.create({
       data: {
@@ -111,6 +116,8 @@ export class ContactInfoService {
 
     const { links, ...contactInfoData } = dto;
 
+    this.validateUniqueLinkTypes(links);
+
     return this.prisma.contactInfo.update({
       where: {
         id: contactInfo.id,
@@ -161,5 +168,20 @@ export class ContactInfoService {
         id: contactInfo.id,
       },
     });
+  }
+
+  /**
+   *
+   * @param links
+   * @returns
+   */
+  private validateUniqueLinkTypes(links?: CreateProfileLinkDto[]) {
+    if (!links) return;
+
+    const types = links.map((link) => link.type);
+
+    if (new Set(types).size !== types.length) {
+      throw new ConflictException('Each link type can only be added once');
+    }
   }
 }
