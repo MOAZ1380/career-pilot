@@ -1,46 +1,133 @@
-import { Experience } from "@/services/experience/types/experience";
-import { Language } from "@/services/language/types/language";
-import { Skill } from "@/services/skill/types/skill";
-import { Certificate } from "@/services/certificate/types/certificate";
-import { Project } from "@/services/project/types/project";
+export enum ResumeTemplate {
+  MODERN = "MODERN",
+  CLASSIC = "CLASSIC",
+  MINIMAL = "MINIMAL",
+}
+export interface ResumeSkill {
+  id: string;
+  skillId: string;
+  skill: {
+    id: string;
+    name: string;
+  };
+}
 
-export type ResumeTemplate = "MODERN" | "CLASSIC" | "MINIMAL";
+export interface ResumeExperience {
+  id: string;
+  experienceId: string;
+  customDescription: string[];
+  experience: {
+    id: string;
+    jobTitle: string;
+    company: string;
+    startDate?: string | null;
+    endDate?: string | null;
+    description?: string | null;
+  };
+}
+
+export interface ResumeProject {
+  id: string;
+  projectId: string;
+  customizedDescription: string;
+  project: {
+    id: string;
+    name: string;
+    description: string;
+    technologies: string[];
+    github?: string | null;
+    liveDemo?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  };
+}
+
+export interface ResumeEducation {
+  id: string;
+  educationId: string;
+  education: {
+    id: string;
+    degree?: string | null;
+    fieldOfStudy?: string | null;
+    institution?: string | null;
+    startDate?: string | null;
+    endDate?: string | null;
+  };
+}
+
+export interface ResumeCertificate {
+  id: string;
+  certificateId: string;
+  certificate: {
+    id: string;
+    name?: string | null;
+    issuer?: string | null;
+    issueDate?: string | null;
+  };
+}
+
+export interface ResumeLanguage {
+  id: string;
+  languageId: string;
+  language: {
+    id: string;
+    name: string;
+    level?: string | null;
+  };
+}
 
 export interface Resume {
   id: string;
-
   title: string;
   template: ResumeTemplate;
-
   jobDescription?: string | null;
   generatedSummary?: string | null;
-
   profileId: string;
 
-  createdAt: string;
-  updatedAt: string;
-}
+  skills: ResumeSkill[];
+  experiences: ResumeExperience[];
+  projects: ResumeProject[];
+  educations: ResumeEducation[];
+  certificates: ResumeCertificate[];
+  languages: ResumeLanguage[];
 
-export interface ResumeDetails extends Resume {
-  skills: Skill[];
-  experiences: Experience[];
-  projects: Project[];
-  certificates: Certificate[];
-  languages: Language[];
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface CreateResumeDto {
   title: string;
   template: ResumeTemplate;
-
   jobDescription?: string;
   generatedSummary?: string;
 
   skillIds: string[];
   experienceIds: string[];
+  educationIds: string[];
   projectIds: string[];
   certificateIds: string[];
   languageIds: string[];
+
+  experienceDescriptions?: Record<string, string[]>;
+  projectDescriptions?: Record<string, string>;
 }
 
-export interface UpdateResumeDto extends Partial<CreateResumeDto> {}
+export type UpdateResumeDto = Partial<CreateResumeDto>;
+
+export interface ResumeFormData {
+  title: string;
+  template: ResumeTemplate;
+
+  jobDescription: string;
+  generatedSummary: string;
+
+  skillIds: string[];
+  experienceIds: string[];
+  educationIds: string[];
+  projectIds: string[];
+  certificateIds: string[];
+  languageIds: string[];
+
+  experienceDescriptions: Record<string, string[]>;
+  projectDescriptions: Record<string, string>;
+}
