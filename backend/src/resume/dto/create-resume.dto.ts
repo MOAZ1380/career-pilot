@@ -3,6 +3,7 @@ import {
   ArrayUnique,
   IsArray,
   IsEnum,
+  IsNotEmpty,
   IsOptional,
   IsString,
   IsUUID,
@@ -70,4 +71,11 @@ export class CreateResumeDto {
   @IsOptional()
   @MaxLength(4000, { each: true })
   projectDescriptions?: Record<string, string>;
+}
+
+export class CreateResumeByJobDescriptionDto {
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(4000)
+  jobDescription!: string;
 }

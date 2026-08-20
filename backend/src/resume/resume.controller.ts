@@ -8,7 +8,10 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { CreateResumeDto } from './dto/create-resume.dto';
+import {
+  CreateResumeDto,
+  CreateResumeByJobDescriptionDto,
+} from './dto/create-resume.dto';
 import { UpdateResumeDto } from './dto/update-resume.dto';
 import { ResumeService } from './resume.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -28,9 +31,12 @@ export class ResumeController {
   @Post('by-job-description')
   createByJobDescription(
     @CurrentUser() user: JwtAccessPayload,
-    @Body('jobDescription') jobDescription: string,
+    @Body() dto: CreateResumeByJobDescriptionDto,
   ) {
-    return this.resumeService.createByJobDescription(user.sub, jobDescription);
+    return this.resumeService.createByJobDescription(
+      user.sub,
+      dto.jobDescription,
+    );
   }
 
   @Get()

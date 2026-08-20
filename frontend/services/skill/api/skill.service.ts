@@ -33,11 +33,6 @@ export const updateSkill = async (data: UpdateSkillDto): Promise<Skill> => {
   }
 };
 
-export const deleteSkill = async (): Promise<void> => {
-  try {
-    await axios.delete(BASE_URL);
-  } catch (error) {
-    console.error("Error deleting skill:", error);
-    throw error;
-  }
+export const deleteSkill = async (id: string): Promise<void> => {
+  await axios.delete(`${BASE_URL}/${encodeURIComponent(id)}`);
 };
